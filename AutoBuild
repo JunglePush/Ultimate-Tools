@@ -216,6 +216,95 @@ local function WireAll()
 end
 
 
+local function CreateNewPart(Positm,Sizee,Colo,Mat,Shapee,IsAnchoredd, Output1, Output2)
+	if SpawnDebounce == false then
+		local realshape
+		if Shapee == 'Part' then
+			realshape = Part
+		elseif Shapee == 'Sphere' then
+			realshape = Sphere
+		elseif Shapee == 'Wedge' then
+			realshape = Wedge
+		elseif Shapee == 'Cylinder' then
+			realshape = Cylinder
+		elseif Shapee == 'CornerWedge' then
+			realshape = CornerWedge
+		elseif Shapee == 'CornerWedge2' then
+			realshape = CornerWedge2
+		elseif Shapee == 'And' then
+			realshape = And
+		elseif Shapee == 'Nor' then
+			realshape = Nor
+		elseif Shapee == 'Or' then
+			realshape = Or
+		elseif Shapee == 'Nand' then
+			realshape = Nand
+		elseif Shapee == 'Xor' then
+			realshape = Xor
+		elseif Shapee == 'Not' then
+			realshape = Not
+		elseif Shapee == 'Xnor' then
+			realshape = Xnor
+		elseif Shapee == 'Delay' then
+			realshape = Delay_1
+		elseif Shapee == 'Timer' then
+			realshape = Timer
+		elseif Shapee == 'Repeater' then
+			realshape = Repeater
+		elseif Shapee == 'Random' then
+			realshape = Random_1
+		elseif Shapee == 'Switch' then
+			realshape = Switch
+		elseif Shapee == 'Button' then
+			realshape = Button
+		elseif Shapee == 'Hex Digit' then
+			realshape = HexDigit
+		elseif Shapee == 'Node' then
+			realshape = Node
+end
+
+		SpawnDebounce = true
+		port = copy(realshape)
+		if Output1 == nil then
+			print('t')
+		else
+			local numValue = Instance.new('NumberValue')
+			numValue.Parent = port:FindFirstChild('Output')
+			numValue.Name = 'SaveOutput'
+			numValue.Value =  Output1
+		end
+
+		if Output2 == nil then
+			print('t')
+		else
+			local numValue = Instance.new('NumberValue')
+			numValue.Parent = port:FindFirstChild('Output')
+			numValue.Name = 'SaveOutput'
+			numValue.Value =  Output2
+		end
+
+
+		local CreatedWithTool = Instance.new('BoolValue')
+		CreatedWithTool.Name = 'CWT'
+		CreatedWithTool.Parent = port
+		GTool('Properties')
+		wait(0.05)
+		RequestPropertyChangeREMOTE:InvokeServer(port, 'Anchored', IsAnchoredd)
+		GTool('Properties')
+		GTool('Brush')
+		edit(port, 'Color', Colo)
+		edit(port, 'Material', Mat)
+		local seed = serverSeeds[property]:NextInteger(0, clientSeeds[property])
+		ClientBridge.Resize:FireServer(port, Sizee, Positm, {}, seed)
+		for i,v in pairs (Player.Character:GetChildren()) do
+			if v.ClassName == 'Tool' then
+				v.Parent = Player.Backpack
+			end
+		end
+		wait(DebounceTime)
+		SpawnDebounce = false
+	end
+end
 
 
 IsLocked = true
