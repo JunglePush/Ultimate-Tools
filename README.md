@@ -10,6 +10,7 @@ Any users that use this script for trolling/greifing/etc will be reported and po
 loadstrings:
 loadstring(game:HttpGet('https://raw.githubusercontent.com/JunglePush/Ultimate-Export/main/Export%20Tool'))() -- export tool
 loadstring(game:HttpGet('https://raw.githubusercontent.com/JunglePush/Ultimate-Export/main/AutoBuild'))() -- import
+/\ the import tool is deprecated.
 
 these can keep you up to date!
 
