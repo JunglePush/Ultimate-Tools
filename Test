@@ -1,0 +1,172 @@
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local ClientBridge = game:GetService("ReplicatedStorage").ClientBridge
+local DragControlIer = ClientBridge.DragControlIer
+local serverSeeds = {}
+local clientSeeds = {}
+local increments = {Material = function() return 0 end, Surface = function() return 0 end}
+local property = "Resize"
+local RequestPropertyChangeREMOTE = game:GetService("ReplicatedStorage").ClientBridge.RequestPropertyChange
+local SpawnDebounce = false
+local DebounceTime = .05
+local port
+local Part = workspace.Map.Bricks["Black Bricks"].Parts.Part
+local Sphere = workspace.Map.Bricks["Rocket Parts"].Parts.Sphere
+local Wedge = workspace.Map.Bricks["Triangles"].Green.Wedge
+local Cylinder
+local CornerWedge
+local CornerWedge2
+
+
+for _, Brick in pairs(workspace.Map.Bricks["Rocket Parts"].Parts:GetChildren()) do
+	if Brick.Size.X == 5 then
+		if Brick.Shape == Enum.PartType.Cylinder then
+			Cylinder = Brick
+			Brick.Name = "Cylinder"
+		end
+	end
+end
+
+for _, Brock in pairs(workspace.Map.Bricks["Triangles"].Green:GetChildren()) do
+		if Brock.ClassName == "MeshPart" then
+			CornerWedge = Brock
+				Brock.Name = "CornerWedge"
+	end		
+end
+
+for _, Brock2 in pairs(workspace.Map.Bricks["Triangles"].Green:GetChildren()) do
+	if Brock2.Size.Y == 1 then
+		if Brock2.ClassName == "CornerWedgePart" then
+			CornerWedge2 = Brock2
+				Brock2.Name = "CornerWedge2"
+		end		
+	end
+end
+
+local function GTool(TName)
+	local Tool = Player.Backpack:FindFirstChild(TName)
+	local Tool2 = Player.Character:FindFirstChild(TName)
+	if Tool then
+		Tool.Parent = Player.Character
+	elseif Tool2 then
+		Tool2.Parent = Player.Backpack
+	end
+end
+
+
+
+for _, func in pairs(getgc()) do
+	if type(func) == "function" and islclosure(func) then
+		local source = getfenv(func).script
+		local constants = getconstants(func)
+		local nextInt = table.find(constants, "NextInteger")
+		local seed = nextInt and constants[nextInt - 1]
+		if seed and typeof(seed) == "number" then
+			clientSeeds[source.Name] = seed
+		elseif source and source:IsDescendantOf(game) then
+			if source.Name == "Paint" then
+				increments["Color"] = function()
+					local increment = getupvalue(func, 5) + 1
+					setupvalue(func, 5, increment)
+					return increment
+				end
+			else
+				for _, upvalue in pairs(getupvalues(func)) do
+					if typeof(upvalue) == "Random" then
+						serverSeeds[source.Name] = upvalue
+						break
+					end
+				end
+			end
+		end
+	end
+end
+
+function getSeed(property)
+	return serverSeeds[property]:NextInteger(0, clientSeeds[property])
+end
+
+function copy(port, cFrame)
+	GTool("Clone")
+	wait()
+	local success, key, port = DragControlIer:InvokeServer("GetKey", port, true)
+	if success then
+		DragControlIer.Update:FireServer("Update", key, cFrame)
+		DragControlIer.Update:FireServer("ClearKey", key)
+	end
+	GTool("Clone")
+	return success and port
+end
+
+function edit(port, property, ...)
+	GTool("Brush")
+	wait()
+	if increments[property] ~= nil then
+		local increment = increments[property]()
+		ClientBridge.ClassicController:FireServer("Lasso", Vector3.new())
+		ClientBridge.ClassicController:FireServer(property .. "Start", increment, {[property] = ...})
+		ClientBridge.ClassicController:FireServer(property, increment, {Part = port})
+		ClientBridge.ClassicController:FireServer(property .. "Stop", increment, {})
+		ClientBridge.ClassicController:FireServer("Lasso")
+	else
+		local arguments = {port}
+		for i, argument in pairs(table.pack(...)) do
+			if type(i) == "number" then
+				table.insert(arguments, argument)
+			end
+		end
+		if type(arguments[#arguments]) ~= "table" then
+			table.insert(arguments, {})
+		end
+		table.insert(arguments, getSeed(property))
+		ClientBridge:FindFirstChild((property == "CFrame" and "Move") or property):FireServer(unpack(arguments))
+		GTool("Brush")
+	end
+
+end
+
+local function CreateNewPart(Positm,Sizee,Colo,Mat,Shapee,IsAnchoredd,IsLocked)
+	if SpawnDebounce == false then
+		local realshape
+		if Shapee == "Part" then
+			realshape = Part
+		elseif Shapee == "Sphere" then
+			realshape = Sphere
+		elseif Shapee == "Wedge" then
+			realshape = Wedge
+		elseif Shapee == "Cylinder" then
+			realshape = Cylinder
+		elseif Shapee == "CornerWedge" then
+			realshape = CornerWedge
+		elseif Shapee == "CornerWedge2" then
+			realshape = CornerWedge2
+
+		end
+
+		SpawnDebounce = true
+		port = copy(realshape)
+		local CreatedWithTool = Instance.new("BoolValue")
+		CreatedWithTool.Name = "CWT"
+		CreatedWithTool.Parent = port
+		GTool("Properties")
+		wait(0.05)
+		RequestPropertyChangeREMOTE:InvokeServer(port, "Anchored", IsAnchoredd)
+		GTool("VIP")
+		wait(0.05)
+		RequestPropertyChangeREMOTE:InvokeServer(port, "Locked", IsLocked)		
+		GTool("Properties")
+		GTool("VIP")
+		GTool("Brush")
+		edit(port, "Color", Colo)
+		edit(port, "Material", Mat)
+		local seed = serverSeeds[property]:NextInteger(0, clientSeeds[property])
+		ClientBridge.Resize:FireServer(port, Sizee, Positm, {}, seed)
+		for i,v in pairs (Player.Character:GetChildren()) do
+			if v.ClassName == "Tool" then
+				v.Parent = Player.Backpack
+			end
+		end
+		wait(DebounceTime)
+		SpawnDebounce = false
+	end
+end
