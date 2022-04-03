@@ -7,7 +7,9 @@ noticed that there is a issue with upvalues so sometimes this can break (say re 
 
 Any users that use this script for trolling/greifing/etc will be reported and possibly banned you've been warned!
 
-h
+loadstrings:
+loadstring(game:HttpGet('https://github.com/JunglePush/Ultimate-Export/blob/main/Export%20Tool'))() -- export tool
+loadstring(game:HttpGet('https://github.com/JunglePush/Ultimate-Export/blob/main/AutoBuild'))() -- import
 
 Working Executors:
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
