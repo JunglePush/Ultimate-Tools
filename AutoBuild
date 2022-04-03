@@ -1,0 +1,229 @@
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local ClientBridge = game:GetService("ReplicatedStorage").ClientBridge
+local DragControlIer = ClientBridge.DragControlIer
+local serverSeeds = {}
+local clientSeeds = {}
+local increments = {Material = function() return 0 end, Surface = function() return 0 end}
+local property = "Resize"
+local RequestPropertyChangeREMOTE = game:GetService("ReplicatedStorage").ClientBridge.RequestPropertyChange
+local SpawnDebounce = false
+local DebounceTime = .05
+local port
+local Part = workspace.Map.Bricks["Black Bricks"].Parts.Part
+local Sphere = workspace.Map.Bricks["Rocket Parts"].Parts.Sphere
+local Wedge = workspace.Map.Bricks["Triangles"].Green.Wedge
+local And = workspace.Map.Bricks["Wiring"].Parts.Gates.And
+local Or = workspace.Map.Bricks["Wiring"].Parts.Gates.Or
+local Nor = workspace.Map.Bricks["Wiring"].Parts.Gates.Nor
+local Nand = workspace.Map.Bricks["Wiring"].Parts.Gates.Nand
+local Xor = workspace.Map.Bricks["Wiring"].Parts.Gates.Xor
+local Not = workspace.Map.Bricks["Wiring"].Parts.Gates.Not
+local Xnor = workspace.Map.Bricks["Wiring"].Parts.Gates.Xnor
+local Delay_1 = workspace.Map.Bricks["Wiring"].Parts.Gates.Delay
+local Switch = workspace.Map.Bricks["Wiring"].Parts.Switch
+local Button = workspace.Map.Bricks["Wiring"].Parts.Button
+local Node = workspace.Map.Bricks["Wiring"].Parts.Node
+local HexDigit = workspace.Map.Bricks["Wiring"].Parts["Hex Digit"]
+
+local Timer = workspace.Map.Bricks["Wiring"].Parts.Gates.Timer
+local Repeater = workspace.Map.Bricks["Wiring"].Parts.Gates.Repeater
+local Random_1 = workspace.Map.Bricks["Wiring"].Parts.Gates.Random
+
+local Cylinder
+local CornerWedge
+local CornerWedge2
+
+local InputI = CFrame.new(1.80802083, 0.25, 0.44424665, 0, -1, 0, 1, 0, -0, 0, 0, 1)
+local InputII = CFrame.new(1.80555654, 0.24999994, -0.444556385, 0, -1, 0, 1, 0, -0, 0, 0, 1)
+local MidInput = CFrame.new(1.80232978, 0.25, -0.00449230149, 0, -1, 0, 1, 0, -0, 0, 0, 1) 
+local MidInput2 = CFrame.new(1.56786263, 0.25, -0.0371489711, 0, -1, 0, 1, 0, -0, 0, 0, 1)
+local SwitchInput = CFrame.new(0, 0, 1.10000002, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+local NodeInput = CFrame.new(1.05233002, 0, -0.00448608398, 0, -1, 0, 1, 0, -0, 0, 0, 1)
+
+for _, Brick in pairs(workspace.Map.Bricks["Rocket Parts"].Parts:GetChildren()) do
+	if Brick.Size.X == 5 then
+		if Brick.Shape == Enum.PartType.Cylinder then
+			Cylinder = Brick
+			Brick.Name = "Cylinder"
+		end
+	end
+end
+
+for _, Brock in pairs(workspace.Map.Bricks["Triangles"].Green:GetChildren()) do
+	if Brock.ClassName == "MeshPart" then
+		CornerWedge = Brock
+		Brock.Name = "CornerWedge"
+	end		
+end
+
+for _, Brock2 in pairs(workspace.Map.Bricks["Triangles"].Green:GetChildren()) do
+	if Brock2.Size.Y == 1 then
+		if Brock2.ClassName == "CornerWedgePart" then
+			CornerWedge2 = Brock2
+			Brock2.Name = "CornerWedge2"
+		end		
+	end
+end
+
+local function GTool(TName)
+	local Tool = Player.Backpack:FindFirstChild(TName)
+	local Tool2 = Player.Character:FindFirstChild(TName)
+	if Tool then
+		Tool.Parent = Player.Character
+	elseif Tool2 then
+		Tool2.Parent = Player.Backpack
+	end
+end
+
+
+
+for _, func in pairs(getgc()) do
+	if type(func) == "function" and islclosure(func) then
+		local source = getfenv(func).script
+		local constants = getconstants(func)
+		local nextInt = table.find(constants, "NextInteger")
+		local seed = nextInt and constants[nextInt - 1]
+		if seed and typeof(seed) == "number" then
+			clientSeeds[source.Name] = seed
+		elseif source and source:IsDescendantOf(game) then
+			if source.Name == "Paint" then
+				increments["Color"] = function()
+					local increment = getupvalue(func, 5) + 1
+					setupvalue(func, 5, increment)
+					return increment
+				end
+			else
+				for _, upvalue in pairs(getupvalues(func)) do
+					if typeof(upvalue) == "Random" then
+						serverSeeds[source.Name] = upvalue
+						break
+					end
+				end
+			end
+		end
+	end
+end
+
+function getSeed(property)
+	return serverSeeds[property]:NextInteger(0, clientSeeds[property])
+end
+
+function copy(port, cFrame)
+	GTool("Clone")
+	wait()
+	local success, key, port = DragControlIer:InvokeServer("GetKey", port, true)
+	if success then
+		DragControlIer.Update:FireServer("Update", key, cFrame)
+		DragControlIer.Update:FireServer("ClearKey", key)
+	end
+	GTool("Clone")
+	return success and port
+end
+
+function edit(port, property, ...)
+	GTool("Brush")
+	wait()
+	if increments[property] ~= nil then
+		local increment = increments[property]()
+		ClientBridge.ClassicController:FireServer("Lasso", Vector3.new())
+		ClientBridge.ClassicController:FireServer(property .. "Start", increment, {[property] = ...})
+		ClientBridge.ClassicController:FireServer(property, increment, {Part = port})
+		ClientBridge.ClassicController:FireServer(property .. "Stop", increment, {})
+		ClientBridge.ClassicController:FireServer("Lasso")
+	else
+		local arguments = {port}
+		for i, argument in pairs(table.pack(...)) do
+			if type(i) == "number" then
+				table.insert(arguments, argument)
+			end
+		end
+		if type(arguments[#arguments]) ~= "table" then
+			table.insert(arguments, {})
+		end
+		table.insert(arguments, getSeed(property))
+		ClientBridge:FindFirstChild((property == "CFrame" and "Move") or property):FireServer(unpack(arguments))
+		GTool("Brush")
+	end
+
+end
+
+local function WireScript()
+	local Output = workspace.Nand.Output
+	local Input = workspace.And.Input
+
+
+	local ColorSequenceScript = ColorSequence.new({
+		[1] = ColorSequenceKeypoint.new(0, Color3.new(1, 1, 0)),
+		[2] = ColorSequenceKeypoint.new(1, Color3.new(1, 1, 0))
+	})
+
+
+
+	ClientBridge.Wire:InvoteServer("Add",Output,Input,ColorSequenceScript)
+end
+
+
+local SaveInputNum
+local SaveOutputNum
+local function WireAll()
+	for i,v in pairs(workspace:GetChildren()) do
+		if v.ClassName == "Part" then
+			for n,l in pairs(v:GetChildren()) do
+
+				if l.Name == "Input" then
+					for i,v in pairs(l:GetChildren()) do
+						if v.Name == "SaveInput" then
+							SaveInputNum = v
+							print("inputnum")
+							print(SaveInputNum.Value)
+
+						end
+					end
+				end
+
+				if l.Name == "Output" then
+					for i,v in pairs(l:GetChildren()) do
+						if v.Name == "SaveOutput" then
+							SaveOutputNum = v
+							print("outputnum")
+							print(SaveOutputNum.Value)
+
+						end
+					end
+				end
+
+			end			
+		end
+	end
+
+	if SaveOutputNum.Value == SaveInputNum.Value then
+		print(SaveOutputNum, SaveInputNum)
+		print("WIRING!!!!!!")
+		local part1 = SaveOutputNum.Parent
+		local part2 = SaveInputNum.Parent
+		local ohString1 = "Add"
+		local ColoSeq = ColorSequence.new({
+			[1] = ColorSequenceKeypoint.new(0, Color3.new(1, 1, 0)),
+			[2] = ColorSequenceKeypoint.new(1, Color3.new(1, 1, 0))
+		})
+
+		ClientBridge.Wire:InvokeServer("Add", part1, part2, ColoSeq)
+		SaveOutputNum:Destroy()
+		SaveInputNum:Destroy()
+		return
+	end
+end
+
+
+
+
+IsLocked = true
+IsAnchored = false
+Position = CFrame.new(-0.943286120891571, 5.829283714294434, 136.93963623046875)
+Rotation = CFrame.Angles(math.rad(-179.97000122070312),math.rad(-3.8399999141693115),math.rad(-180))
+Color = Color3.new(0.388235, 0.372549, 0.384314)
+Size = Vector3.new(4, 4, 4)
+Material = Enum.Material.SmoothPlastic
+shape = Part.Name
+CreateNewPart(Position * Rotation, Size, Color, Material, shape, IsAnchored,IsLocked)
