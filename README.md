@@ -8,11 +8,10 @@ noticed that there is a issue with upvalues so sometimes this can break (say re 
 Any users that use this script for trolling/greifing/etc will be reported and possibly banned you've been warned!
 
 loadstrings:
-loadstring(game:HttpGet('https://raw.githubusercontent.com/JunglePush/Ultimate-Export/main/Export%20Tool'))() -- export tool
-loadstring(game:HttpGet('https://raw.githubusercontent.com/JunglePush/Ultimate-Export/main/AutoBuild'))() -- import
-/\ the import tool is deprecated. INSTEAD do loadfile("Properties.txt")()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/JunglePush/Ultimate-Export/main/AutoBuildScript'))() -- export tool
 
-these can keep you up to date!
+if you have clicked send to file, execute that code below.
+loadfile("Properties.txt")()
 
 Working Executors:
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
