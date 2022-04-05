@@ -1,733 +1,624 @@
--- Gui to Lua
--- Version: 3.2
-
--- Instances:
-
-local ExportImport = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local UICorner = Instance.new("UICorner")
-local Frame_2 = Instance.new("Frame")
-local UICorner_2 = Instance.new("UICorner")
-local left = Instance.new("TextLabel")
-local Expo = Instance.new("TextButton")
-local UICorner_3 = Instance.new("UICorner")
-local Impo = Instance.new("TextButton")
-local UICorner_4 = Instance.new("UICorner")
-local left2 = Instance.new("TextLabel")
+local prontpart = Instance.new("ScreenGui")
 local TextButton = Instance.new("TextButton")
+local selectionFrame = Instance.new("Frame")
+local partnumberrr = 0
+local totalparts = 0
 
---Properties:
+prontpart.Name = "prontpart"
+prontpart.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+prontpart.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-ExportImport.Name = "ExportImport"
-ExportImport.Parent = game.CoreGui
-ExportImport.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-ExportImport.ResetOnSpawn = false
-
-Frame.Parent = ExportImport
-Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Frame.Position = UDim2.new(0.841307819, 0, 0.715151489, 0)
-Frame.Size = UDim2.new(0, 119, 0, 108)
-
-UICorner.CornerRadius = UDim.new(0, 7)
-UICorner.Parent = Frame
-
-Frame_2.Parent = Frame
-Frame_2.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Frame_2.Position = UDim2.new(0.0588235296, 0, 0.0482556373, 0)
-Frame_2.Size = UDim2.new(0, 105, 0, 96)
-
-UICorner_2.CornerRadius = UDim.new(0, 4)
-UICorner_2.Parent = Frame_2
-
-left.Name = "left"
-left.Parent = Frame_2
-left.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-left.BackgroundTransparency = 1.000
-left.Size = UDim2.new(0, 105, 0, 30)
-left.Font = Enum.Font.SourceSans
-left.Text = "Select/import"
-left.TextColor3 = Color3.fromRGB(255, 255, 255)
-left.TextScaled = true
-left.TextSize = 14.000
-left.TextWrapped = true
-
-Expo.Name = "Expo"
-Expo.Parent = Frame_2
-Expo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Expo.Position = UDim2.new(0.0793526769, 0, 0.315789551, 0)
-Expo.Size = UDim2.new(0, 87, 0, 26)
-Expo.Font = Enum.Font.SourceSans
-Expo.Text = "Export Tool"
-Expo.TextColor3 = Color3.fromRGB(0, 0, 0)
-Expo.TextScaled = true
-Expo.TextSize = 14.000
-Expo.TextWrapped = true
-
-UICorner_3.Parent = Expo
-
-Impo.Name = "Impo"
-Impo.Parent = Frame_2
-Impo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Impo.Position = UDim2.new(0.0793526769, 0, 0.640899003, 0)
-Impo.Size = UDim2.new(0, 87, 0, 25)
-Impo.Font = Enum.Font.SourceSans
-Impo.Text = "Import"
-Impo.TextColor3 = Color3.fromRGB(0, 0, 0)
-Impo.TextScaled = true
-Impo.TextSize = 14.000
-Impo.TextWrapped = true
-
-UICorner_4.Parent = Impo
-
-left2.Name = "left2"
-left2.Parent = Frame_2
-left2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-left2.BackgroundTransparency = 1.000
-left2.Position = UDim2.new(-0.0666666701, 0, -0.447916657, 0)
-left2.Size = UDim2.new(0, 119, 0, 30)
-left2.Font = Enum.Font.SourceSans
-left2.Text = "n/a"
-left2.TextColor3 = Color3.fromRGB(255, 255, 255)
-left2.TextScaled = true
-left2.TextSize = 14.000
-left2.TextWrapped = true
-
-TextButton.Parent = Frame
+TextButton.Parent = prontpart
 TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TextButton.BackgroundTransparency = 1.000
-TextButton.Position = UDim2.new(-0.0672268942, 0, -0.0648148134, 0)
-TextButton.Size = UDim2.new(0, 23, 0, 24)
-TextButton.Font = Enum.Font.GothamBold
-TextButton.Text = "X"
-TextButton.TextColor3 = Color3.fromRGB(255, 57, 57)
-TextButton.TextScaled = true
+TextButton.Position = UDim2.new(0.434367537, 0, 0.0448484831, 0)
+TextButton.Size = UDim2.new(0, 200, 0, 40)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = "Send to file"
+TextButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 TextButton.TextSize = 14.000
-TextButton.TextWrapped = true
+TextButton.Visible = false
 
--- Scripts:
+selectionFrame.Name = "selectionFrame"
+selectionFrame.Parent = prontpart
+selectionFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+selectionFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+selectionFrame.BackgroundTransparency = 0.800
 
-local function TLCEK_fake_script() -- Frame.Drag 
-	local script = Instance.new('LocalScript', Frame)
-
-	local UserInputService = game:GetService("UserInputService")
-	local runService = (game:GetService("RunService"));
-	
-	local gui = script.Parent
-	
-	local dragging
-	local dragInput
-	local dragStart
-	local startPos
-	
-	function Lerp(a, b, m)
-		return a + (b - a) * m
-	end;
-	
-	local lastMousePos
-	local lastGoalPos
-	local DRAG_SPEED = (15); -- // The speed of the UI darg.
-	function Update(dt)
-		if not (startPos) then return end;
-		if not (dragging) and (lastGoalPos) then
-			gui.Position = UDim2.new(startPos.X.Scale, Lerp(gui.Position.X.Offset, lastGoalPos.X.Offset, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(gui.Position.Y.Offset, lastGoalPos.Y.Offset, dt * DRAG_SPEED))
-			return 
-		end;
-	
-		local delta = (lastMousePos - UserInputService:GetMouseLocation())
-		local xGoal = (startPos.X.Offset - delta.X);
-		local yGoal = (startPos.Y.Offset - delta.Y);
-		lastGoalPos = UDim2.new(startPos.X.Scale, xGoal, startPos.Y.Scale, yGoal)
-		gui.Position = UDim2.new(startPos.X.Scale, Lerp(gui.Position.X.Offset, xGoal, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(gui.Position.Y.Offset, yGoal, dt * DRAG_SPEED))
-	end;
-	
-	gui.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			dragging = true
-			dragStart = input.Position
-			startPos = gui.Position
-			lastMousePos = UserInputService:GetMouseLocation()
-	
-			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then
-					dragging = false
-				end
-			end)
-		end
-	end)
-	
-	gui.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-			dragInput = input
-		end
-	end)
-	
-	runService.Heartbeat:Connect(Update)
-end
-coroutine.wrap(TLCEK_fake_script)()
-local function VSPW_fake_script() -- Expo.LocalScript 
-	local script = Instance.new('LocalScript', Expo)
-
-	script.Parent.MouseButton1Click:Connect(function()
-	
-		-- Version: 3.2
-	
-		-- Instances:
-	
-		local prontpart = Instance.new("ScreenGui")
-		local TextButton = Instance.new("TextButton")
-		local selectionFrame = Instance.new("Frame")
-		local partnumberrr = 0
-		--Properties:
-	
-		prontpart.Name = "prontpart"
-		prontpart.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-		prontpart.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-		local	totalparts = 0
-		TextButton.Parent = prontpart
-		TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		TextButton.Position = UDim2.new(0.434367537, 0, 0.0448484831, 0)
-		TextButton.Size = UDim2.new(0, 200, 0, 40)
-		TextButton.Font = Enum.Font.SourceSans
-		TextButton.Text = "Send to file"
-		TextButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-		TextButton.TextSize = 14.000
-	
-		selectionFrame.Name = "selectionFrame"
-		selectionFrame.Parent = prontpart
-		selectionFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-		selectionFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		selectionFrame.BackgroundTransparency = 0.800
-	
-		-- Scripts:
-	
-		local function RPUJM_fake_script() -- selectionFrame.LocalScript 
-			local script = Instance.new('LocalScript', selectionFrame)
-	
-			local plr = game:GetService("Players").LocalPlayer
-			local mouse = plr:GetMouse()
-			local equip = false
-			local tool = Instance.new("Tool")
-			local part
-			local Toggled = false
-			tool.RequiresHandle = false
-			tool.Name = "Click Teleport"
-			local connection
-			local connection2
-			local connection3
-			local ShapeM
-			local MaterialM
-			tool.Equipped:Connect(function()
-	
-				equip = true
-	
-				connection = script.Parent.Parent.TextButton.MouseButton1Click:Connect(function()
-					game.CoreGui.ExportImport.Frame.Frame.left.Text = "Exporting..."
-					for _,p in pairs(workspace:GetChildren()) do
-						if p.Name == "Part" or p.Name == "Wedge" or p.Name == "Sphere" or p:IsA("MeshPart") then
-							for _,l in pairs(p:GetChildren()) do
-								if l.Name == "Selection" then
-									totalparts = totalparts + 1
-								end
-							end
+local function RPUJM_fake_script()
+	local script = Instance.new('LocalScript', selectionFrame)
+	local plr = game:GetService("Players").LocalPlayer
+	local mouse = plr:GetMouse()
+	local equip = false
+	local tool = Instance.new("Tool")
+	local part
+	local Toggled = false
+	tool.RequiresHandle = false
+	tool.Name = "Export Tool"
+	local connection
+	local connection2
+	local connection3
+	local ShapeM
+	local MaterialM
+	tool.Equipped:Connect(function()
+		equip = true
+		connection = script.Parent.Parent.TextButton.MouseButton1Click:Connect(function()
+			game.CoreGui.ExportImport.Frame.Frame.left.Text = "Exporting..."
+			for _,p in pairs(workspace:GetChildren()) do
+				if p.Name == "Part" or p.Name == "Wedge" or p.Name == "Sphere" or p:IsA("MeshPart") then
+					for _,l in pairs(p:GetChildren()) do
+						if l.Name == "Selection" then
+							totalparts = totalparts + 1
 						end
 					end
-	
-					writefile("Properties.txt", "")
-					appendfile("Properties.txt", "\n" .. "local Players = game:GetService('Players')")
-					appendfile("Properties.txt", "\n" .. "local Player = Players.LocalPlayer")
-					appendfile("Properties.txt", "\n" .. "local ClientBridge = game:GetService('ReplicatedStorage').ClientBridge")
-					appendfile("Properties.txt", "\n" .. "local DragControlIer = ClientBridge.DragControlIer")
-					appendfile("Properties.txt", "\n" .. "local serverSeeds = {}")
-					appendfile("Properties.txt", "\n" .. "local clientSeeds = {}")
-					appendfile("Properties.txt", "\n" .. "local increments = {Material = function() return 0 end, Surface = function() return 0 end}")
-					appendfile("Properties.txt", "\n" .. "local property = 'Resize'")
-					appendfile("Properties.txt", "\n" .. "local RequestPropertyChangeREMOTE = game:GetService('ReplicatedStorage').ClientBridge.RequestPropertyChange")
-					appendfile("Properties.txt", "\n" .. "local SpawnDebounce = false")
-					appendfile("Properties.txt", "\n" .. "local DebounceTime = .05")
-					appendfile("Properties.txt", "\n" .. "local port")
-					appendfile("Properties.txt", "\n" .. "local Part = workspace.Map.Bricks['Black Bricks'].Parts.Part")
-					appendfile("Properties.txt", "\n" .. "local Sphere = workspace.Map.Bricks['Rocket Parts'].Parts.Sphere")
-					appendfile("Properties.txt", "\n" .. "local Wedge = workspace.Map.Bricks['Triangles'].Green.Wedge")
-					appendfile("Properties.txt", "\n" .. "local And = workspace.Map.Bricks['Wiring'].Parts.Gates.And")
-					appendfile("Properties.txt", "\n" .. "local Or = workspace.Map.Bricks['Wiring'].Parts.Gates.Or")
-					appendfile("Properties.txt", "\n" .. "local Nor = workspace.Map.Bricks['Wiring'].Parts.Gates.Nor")
-					appendfile("Properties.txt", "\n" .. "local Nand = workspace.Map.Bricks['Wiring'].Parts.Gates.Nand")
-					appendfile("Properties.txt", "\n" .. "local Xor = workspace.Map.Bricks['Wiring'].Parts.Gates.Xor")
-					appendfile("Properties.txt", "\n" .. "local Not = workspace.Map.Bricks['Wiring'].Parts.Gates.Not")
-					appendfile("Properties.txt", "\n" .. "local Xnor = workspace.Map.Bricks['Wiring'].Parts.Gates.Xnor")
-					appendfile("Properties.txt", "\n" .. "local Delay_1 = workspace.Map.Bricks['Wiring'].Parts.Gates.Delay")
-					appendfile("Properties.txt", "\n" .. "local Switch = workspace.Map.Bricks['Wiring'].Parts.Switch")
-					appendfile("Properties.txt", "\n" .. "local Button = workspace.Map.Bricks['Wiring'].Parts.Button")
-					appendfile("Properties.txt", "\n" .. "local Node = workspace.Map.Bricks['Wiring'].Parts.Node")
-					appendfile("Properties.txt", "\n" .. "local HexDigit = workspace.Map.Bricks['Wiring'].Parts['Hex Digit']")
-					appendfile("Properties.txt", "\n")
-					appendfile("Properties.txt", "\n" .. "local Timer = workspace.Map.Bricks['Wiring'].Parts.Gates.Timer")
-					appendfile("Properties.txt", "\n" .. "local Repeater = workspace.Map.Bricks['Wiring'].Parts.Gates.Repeater")
-					appendfile("Properties.txt", "\n" .. "local Random_1 = workspace.Map.Bricks['Wiring'].Parts.Gates.Random")
-					appendfile("Properties.txt", "\n")
-					appendfile("Properties.txt", "\n" .. "local Cylinder")
-					appendfile("Properties.txt", "\n" .. "local CornerWedge")
-					appendfile("Properties.txt", "\n" .. "local CornerWedge2")
-					appendfile("Properties.txt", "\n")
-					appendfile("Properties.txt", "\n" .. "local InputI = CFrame.new(1.80802083, 0.25, 0.44424665, 0, -1, 0, 1, 0, -0, 0, 0, 1)")
-					appendfile("Properties.txt", "\n" .. "local InputII = CFrame.new(1.80555654, 0.24999994, -0.444556385, 0, -1, 0, 1, 0, -0, 0, 0, 1)")
-					appendfile("Properties.txt", "\n" .. "local MidInput = CFrame.new(1.80232978, 0.25, -0.00449230149, 0, -1, 0, 1, 0, -0, 0, 0, 1) ")
-					appendfile("Properties.txt", "\n" .. "local MidInput2 = CFrame.new(1.56786263, 0.25, -0.0371489711, 0, -1, 0, 1, 0, -0, 0, 0, 1)")
-					appendfile("Properties.txt", "\n" .. "local SwitchInput = CFrame.new(0, 0, 1.10000002, 0, 0, 1, 0, 1, -0, -1, 0, 0)")
-					appendfile("Properties.txt", "\n" .. "local NodeInput = CFrame.new(1.05233002, 0, -0.00448608398, 0, -1, 0, 1, 0, -0, 0, 0, 1)")
-					appendfile("Properties.txt", "\n")
-					appendfile("Properties.txt", "\n" .. "			for _, Brick in pairs(workspace.Map.Bricks['Rocket Parts'].Parts:GetChildren()) do")
-					appendfile("Properties.txt", "\n" .. "				if Brick.Size.X == 5 then")
-					appendfile("Properties.txt", "\n" .. "					if Brick.Shape == Enum.PartType.Cylinder then")
-					appendfile("Properties.txt", "\n" .. "						Cylinder = Brick")
-					appendfile("Properties.txt", "\n" .. "						Brick.Name = 'Cylinder'")
-					appendfile("Properties.txt", "\n" .. "					end")
-					appendfile("Properties.txt", "\n" .. "				end")
-					appendfile("Properties.txt", "\n" .. "			end")
-					appendfile("Properties.txt", "\n")
-					appendfile("Properties.txt", "\n" .. "			for _, Brock in pairs(workspace.Map.Bricks['Triangles'].Green:GetChildren()) do")
-					appendfile("Properties.txt", "\n" .. "				if Brock.ClassName == 'MeshPart' then")
-					appendfile("Properties.txt", "\n" .. "					CornerWedge = Brock")
-					appendfile("Properties.txt", "\n" .. "					Brock.Name = 'CornerWedge'")
-					appendfile("Properties.txt", "\n" .. "				end	")
-					appendfile("Properties.txt", "\n" .. "			end")
-					appendfile("Properties.txt", "\n")
-					appendfile("Properties.txt", "\n" .. "			for _, Brock2 in pairs(workspace.Map.Bricks['Triangles'].Green:GetChildren()) do")
-					appendfile("Properties.txt", "\n" .. "				if Brock2.Size.Y == 1 then")
-					appendfile("Properties.txt", "\n" .. "					if Brock2.ClassName == 'CornerWedgePart' then")
-					appendfile("Properties.txt", "\n" .. "						CornerWedge2 = Brock2")
-					appendfile("Properties.txt", "\n" .. "						Brock2.Name = 'CornerWedge2'")
-					appendfile("Properties.txt", "\n" .. "					end		")
-					appendfile("Properties.txt", "\n" .. "				end")
-					appendfile("Properties.txt", "\n" .. "			end")
-					appendfile("Properties.txt", "\n")
-					appendfile("Properties.txt", "\n" .. "			local function GTool(TName)")
-					appendfile("Properties.txt", "\n" .. "				local Tool = Player.Backpack:FindFirstChild(TName)")
-					appendfile("Properties.txt", "\n" .. "				local Tool2 = Player.Character:FindFirstChild(TName)")
-					appendfile("Properties.txt", "\n" .. "				if Tool then")
-					appendfile("Properties.txt", "\n" .. "					Tool.Parent = Player.Character")
-					appendfile("Properties.txt", "\n" .. "				elseif Tool2 then")
-					appendfile("Properties.txt", "\n" .. "					Tool2.Parent = Player.Backpack")
-					appendfile("Properties.txt", "\n" .. "				end")
-					appendfile("Properties.txt", "\n" .. "			end")
-					appendfile("Properties.txt", "\n")			
-					appendfile("Properties.txt", "\n" .. "			for _, func in pairs(getgc()) do")
-					appendfile("Properties.txt", "\n" .. "				if type(func) == 'function' and islclosure(func) then")
-					appendfile("Properties.txt", "\n" .. "					local source = getfenv(func).script")
-					appendfile("Properties.txt", "\n" .. "					local constants = getconstants(func)")
-					appendfile("Properties.txt", "\n" .. "					local nextInt = table.find(constants, 'NextInteger')")
-					appendfile("Properties.txt", "\n" .. "					local seed = nextInt and constants[nextInt - 1]")
-					appendfile("Properties.txt", "\n" .. "					if seed and typeof(seed) == 'number' then")
-					appendfile("Properties.txt", "\n" .. "						clientSeeds[source.Name] = seed")
-					appendfile("Properties.txt", "\n" .. "					elseif source and source:IsDescendantOf(game) then")
-					appendfile("Properties.txt", "\n" .. "						if source.Name == 'Paint' then")
-					appendfile("Properties.txt", "\n" .. "							increments['Color'] = function()")
-					appendfile("Properties.txt", "\n" .. "							local increment = getupvalue(func, 5) + 1")
-					appendfile("Properties.txt", "\n" .. "								setupvalue(func, 5, increment)")
-					appendfile("Properties.txt", "\n" .. "								return increment")
-					appendfile("Properties.txt", "\n" .. "							end")
-					appendfile("Properties.txt", "\n" .. "						else")
-					appendfile("Properties.txt", "\n" .. "							for _, upvalue in pairs(getupvalues(func)) do")
-					appendfile("Properties.txt", "\n" .. "								if typeof(upvalue) == 'Random' then")
-					appendfile("Properties.txt", "\n" .. "									serverSeeds[source.Name] = upvalue")
-					appendfile("Properties.txt", "\n" .. "									break")
-					appendfile("Properties.txt", "\n" .. "								end")
-					appendfile("Properties.txt", "\n" .. "							end")
-					appendfile("Properties.txt", "\n" .. "						end")
-					appendfile("Properties.txt", "\n" .. "					end")
-					appendfile("Properties.txt", "\n" .. "				end")
-					appendfile("Properties.txt", "\n" .. "			end")
-					appendfile("Properties.txt", "\n")
-					appendfile("Properties.txt", "\n" .. "			function getSeed(property)")
-					appendfile("Properties.txt", "\n" .. "				return serverSeeds[property]:NextInteger(0, clientSeeds[property])")
-					appendfile("Properties.txt", "\n" .. "			end")
-					appendfile("Properties.txt", "\n")
-					appendfile("Properties.txt", "\n" .. "			function copy(port, cFrame)")
-					appendfile("Properties.txt", "\n" .. "				GTool('Clone')")
-					appendfile("Properties.txt", "\n" .. "				wait()")
-					appendfile("Properties.txt", "\n" .. "				local success, key, port = DragControlIer:InvokeServer('GetKey', port, true)")
-					appendfile("Properties.txt", "\n" .. "				if success then")
-					appendfile("Properties.txt", "\n" .. "					DragControlIer.Update:FireServer('Update', key, cFrame)")
-					appendfile("Properties.txt", "\n" .. "					DragControlIer.Update:FireServer('ClearKey', key)")
-					appendfile("Properties.txt", "\n" .. "				end")
-					appendfile("Properties.txt", "\n" .. "				GTool('Clone')")
-					appendfile("Properties.txt", "\n" .. "				return success and port")
-					appendfile("Properties.txt", "\n" .. "			end")
-					appendfile("Properties.txt", "\n")
-					appendfile("Properties.txt", "\n" .. "			function edit(port, property, ...)")
-					appendfile("Properties.txt", "\n" .. "				GTool('Brush')")
-					appendfile("Properties.txt", "\n" .. "				wait()")
-					appendfile("Properties.txt", "\n" .. "				if increments[property] ~= nil then")
-					appendfile("Properties.txt", "\n" .. "					local increment = increments[property]()")
-					appendfile("Properties.txt", "\n" .. "					ClientBridge.ClassicController:FireServer('Lasso', Vector3.new())")
-					appendfile("Properties.txt", "\n" .. "					ClientBridge.ClassicController:FireServer(property .. 'Start', increment, {[property] = ...})")
-					appendfile("Properties.txt", "\n" .. "					ClientBridge.ClassicController:FireServer(property, increment, {Part = port})")
-					appendfile("Properties.txt", "\n" .. "					ClientBridge.ClassicController:FireServer(property .. 'Stop', increment, {})")
-					appendfile("Properties.txt", "\n" .. "					ClientBridge.ClassicController:FireServer('Lasso')")
-					appendfile("Properties.txt", "\n" .. "				else")
-					appendfile("Properties.txt", "\n" .. "					local arguments = {port}")
-					appendfile("Properties.txt", "\n" .. "					for i, argument in pairs(table.pack(...)) do")
-					appendfile("Properties.txt", "\n" .. "						if type(i) == 'number' then")
-					appendfile("Properties.txt", "\n" .. "							table.insert(arguments, argument)")
-					appendfile("Properties.txt", "\n" .. "						end")
-					appendfile("Properties.txt", "\n" .. "					end")
-					appendfile("Properties.txt", "\n" .. "					if type(arguments[#arguments]) ~= 'table' then")
-					appendfile("Properties.txt", "\n" .. "						table.insert(arguments, {})")
-					appendfile("Properties.txt", "\n" .. "					end")
-					appendfile("Properties.txt", "\n" .. "					table.insert(arguments, getSeed(property))")
-					appendfile("Properties.txt", "\n" .. "					ClientBridge:FindFirstChild((property == 'CFrame' and 'Move') or property):FireServer(unpack(arguments))")
-					appendfile("Properties.txt", "\n" .. "					GTool('Brush')")
-					appendfile("Properties.txt", "\n" .. "				end")
-					appendfile("Properties.txt", "\n" .. "			end")
-					appendfile("Properties.txt", "\n")
-					appendfile("Properties.txt", "\n" .. "local function CreateNewPart(Positm,Sizee,Colo,Mat,Shapee,IsAnchoredd,PartNum)")
-					appendfile("Properties.txt", "\n" .. "	if SpawnDebounce == false then")
-					appendfile("Properties.txt", "\n" .. "		local realshape")
-					appendfile("Properties.txt", "\n" .. "		if Shapee == 'Part' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Part")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Sphere' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Sphere")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Wedge' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Wedge")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Cylinder' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Cylinder")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'CornerWedge' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = CornerWedge")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'CornerWedge2' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = CornerWedge2")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'And' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = And")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Nor' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Nor")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Or' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Or")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Nand' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Nand")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Xor' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Xor")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Not' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Not")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Xnor' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Xnor")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Delay' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Delay_1")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Timer' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Timer")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Repeater' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Repeater")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Random' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Random_1")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Switch' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Switch")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Button' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Button")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Hex Digit' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = HexDigit")
-					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Node' then")
-					appendfile("Properties.txt", "\n" .. "			realshape = Node")
-					appendfile("Properties.txt", "\n" .. "end")
-					appendfile("Properties.txt", "\n" .. "			SpawnDebounce = true")
-					appendfile("Properties.txt", "\n" .. "			port = copy(realshape)")
-					appendfile("Properties.txt", "\n" .. "			if Output1 == nil then")
-					appendfile("Properties.txt", "\n" .. "				print('t')")
-					appendfile("Properties.txt", "\n" .. "			else")
-					appendfile("Properties.txt", "\n" .. "				local numValue = Instance.new('NumberValue')")
-					appendfile("Properties.txt", "\n" .. "				numValue.Parent = port:FindFirstChild('Output')")
-					appendfile("Properties.txt", "\n" .. "				numValue.Name = 'SaveOutput'")
-					appendfile("Properties.txt", "\n" .. "				numValue.Value =  Output1")
-					appendfile("Properties.txt", "\n" .. "			end")
-					appendfile("Properties.txt", "\n" .. "			if Output2 == nil then")
-					appendfile("Properties.txt", "\n" .. "				print('t')")
-					appendfile("Properties.txt", "\n" .. "			else")
-					appendfile("Properties.txt", "\n" .. "				local numValue = Instance.new('NumberValue')")
-					appendfile("Properties.txt", "\n" .. "				numValue.Parent = port:FindFirstChild('Output')")
-					appendfile("Properties.txt", "\n" .. "				numValue.Name = 'SaveOutput'")
-					appendfile("Properties.txt", "\n" .. "				numValue.Value =  Output2")
-					appendfile("Properties.txt", "\n" .. "			end")
-					appendfile("Properties.txt", "\n" .. "			local CreatedWithTool = Instance.new('BoolValue')")
-					appendfile("Properties.txt", "\n" .. "			CreatedWithTool.Name = 'CWT'")
-					appendfile("Properties.txt", "\n" .. "			CreatedWithTool.Parent = port")
-					appendfile("Properties.txt", "\n" .. "			GTool('Properties')")
-					appendfile("Properties.txt", "\n" .. "			wait(0.05)")
-					appendfile("Properties.txt", "\n" .. "			RequestPropertyChangeREMOTE:InvokeServer(port, 'Anchored', IsAnchoredd)")
-					appendfile("Properties.txt", "\n" .. "			GTool('Properties')")
-					appendfile("Properties.txt", "\n" .. "			GTool('Brush')")
-					appendfile("Properties.txt", "\n" .. "			edit(port, 'Color', Colo)")
-					appendfile("Properties.txt", "\n" .. "			edit(port, 'Material', Mat)")
-					appendfile("Properties.txt", "\n" .. "			local seed = serverSeeds[property]:NextInteger(0, clientSeeds[property])")
-					appendfile("Properties.txt", "\n" .. "			ClientBridge.Resize:FireServer(port, Sizee, Positm, {}, seed)")
-					appendfile("Properties.txt", "\n" .. "			for i,v in pairs (Player.Character:GetChildren()) do")
-					appendfile("Properties.txt", "\n" .. "				if v.ClassName == 'Tool' then")
-					appendfile("Properties.txt", "\n" .. "					v.Parent = Player.Backpack")
-					appendfile("Properties.txt", "\n" .. "				end")
-					appendfile("Properties.txt", "\n" .. "			end")
-					appendfile("Properties.txt", "\n" .. "			wait(DebounceTime)")
-					appendfile("Properties.txt", "\n" .. "			SpawnDebounce = false")
-					appendfile("Properties.txt", "\n" .. "		end")
-					appendfile("Properties.txt", "\n" .. "	end")
-	
-					appendfile("Properties.txt", "\n"..'game.CoreGui.ExportImport.Frame.Frame.left2.Text ='.."'Total:"..totalparts.."'")
-	
-					for i,v in pairs(workspace:GetChildren()) do
-						if v.Name == "Part" or v.Name == "Wedge" or v.Name == "Sphere" or v:IsA("MeshPart") then
-	
-	
-							if v:IsA("MeshPart") then
-	
-								if v.Name == "Wedge" or v.Name == "CornerWedge" then
-									v.Name = "CornerWedge"
-								end
-							end
-	
-							if v.ClassName == "CornerWedgePart" then
-								if v.Name == "Wedge" or v.Name == "CornerWedge" then
-									v.Name = "CornerWedge"
-								end
-							end
-	
-	
-	
-							for l,m in pairs(v:GetChildren()) do
-								if m.Name == "Selection" then
-									if m.Visible == true then
-										print(m.Parent.Position)
-										local Rotation = m.Parent.Rotation
-										local x = Rotation.X
-										local y = Rotation.Y
-										local z = Rotation.Z
-										if m.Parent.Name == "Part" then
-											if m.Parent.Shape == Enum.PartType.Cylinder then
-												ShapeM = "Cylinder"
-											else
-												ShapeM = m.Parent.Name
-											end
-										else
-											ShapeM = m.Parent.Name
-										end
-	
-	
-										if m.Parent.Material == Enum.Material.Plastic then
-											MaterialM = Enum.Material.SmoothPlastic
-										else
-											MaterialM = m.Parent.Material
-										end
-										partnumberrr = partnumberrr + 1
-	
-										appendfile("Properties.txt", "\n" .. "IsAnchored = ".. tostring(m.Parent.Anchored))
-	
-										appendfile("Properties.txt", "\n" .. "Position = " .. "CFrame.new(" .. tostring(m.Parent.Position) .. ")")
-	
-										appendfile("Properties.txt", "\n".."Rotation = " .. "CFrame.Angles(".."math.rad("..tostring(x).."),".."math.rad("..tostring(y).."),".."math.rad("..tostring(z)  ..")"     ..")")
-	
-										appendfile("Properties.txt", "\n".."Color = " .. "Color3.new(" .. tostring(m.Parent.Color)..")")
-	
-										appendfile("Properties.txt", "\n".."Size = " .. "Vector3.new(" .. tostring(m.Parent.Size)..")")
-	
-										appendfile("Properties.txt", "\n".."Material = ".. tostring(MaterialM))
-	
-										appendfile("Properties.txt", "\n".. "shape = ".. ShapeM..".Name")
-										appendfile("Properties.txt", "\n"..'game.CoreGui.ExportImport.Frame.Frame.left.Text = "Parts imported: '..partnumberrr..'"')
-										appendfile("Properties.txt", "\n"..'CreateNewPart(Position * Rotation, Size, Color, Material, shape, IsAnchored,PartNum)')
-	
-	
-										appendfile("Properties.txt", "\n")
-	
+				end
+			end
+
+			writefile("Properties.txt", "")
+			appendfile("Properties.txt", "\n" .. "local Players = game:GetService('Players')")
+			appendfile("Properties.txt", "\n" .. "local Player = Players.LocalPlayer")
+			appendfile("Properties.txt", "\n" .. "local ClientBridge = game:GetService('ReplicatedStorage').ClientBridge")
+			appendfile("Properties.txt", "\n" .. "local DragControlIer = ClientBridge.DragControlIer")
+			appendfile("Properties.txt", "\n" .. "local serverSeeds = {}")
+			appendfile("Properties.txt", "\n" .. "local clientSeeds = {}")
+			appendfile("Properties.txt", "\n" .. "local increments = {Material = function() return 0 end, Surface = function() return 0 end}")
+			appendfile("Properties.txt", "\n" .. "local property = 'Resize'")
+			appendfile("Properties.txt", "\n" .. "local RequestPropertyChangeREMOTE = game:GetService('ReplicatedStorage').ClientBridge.RequestPropertyChange")
+			appendfile("Properties.txt", "\n" .. "local SpawnDebounce = false")
+			appendfile("Properties.txt", "\n" .. "local DebounceTime = .17")
+			appendfile("Properties.txt", "\n" .. "local port")
+
+			appendfile("Properties.txt", "\n" .. "local Part = workspace.Map.Bricks['Black Bricks'].Parts.Part")
+			appendfile("Properties.txt", "\n" .. "local Sphere = workspace.Map.Bricks['Rocket Parts'].Parts.Sphere")
+			appendfile("Properties.txt", "\n" .. "local Wedge = workspace.Map.Bricks['Triangles'].Green.Wedge")
+			appendfile("Properties.txt", "\n" .. "local And = workspace.Map.Bricks['Wiring'].Parts.Gates.And")
+			appendfile("Properties.txt", "\n" .. "local Or = workspace.Map.Bricks['Wiring'].Parts.Gates.Or")
+			appendfile("Properties.txt", "\n" .. "local Nor = workspace.Map.Bricks['Wiring'].Parts.Gates.Nor")
+			appendfile("Properties.txt", "\n" .. "local Nand = workspace.Map.Bricks['Wiring'].Parts.Gates.Nand")
+			appendfile("Properties.txt", "\n" .. "local Xor = workspace.Map.Bricks['Wiring'].Parts.Gates.Xor")
+			appendfile("Properties.txt", "\n" .. "local Not = workspace.Map.Bricks['Wiring'].Parts.Gates.Not")
+			appendfile("Properties.txt", "\n" .. "local Xnor = workspace.Map.Bricks['Wiring'].Parts.Gates.Xnor")
+			appendfile("Properties.txt", "\n" .. "local Delay_1 = workspace.Map.Bricks['Wiring'].Parts.Gates.Delay")
+			appendfile("Properties.txt", "\n" .. "local Switch = workspace.Map.Bricks['Wiring'].Parts.Switch")
+			appendfile("Properties.txt", "\n" .. "local Button = workspace.Map.Bricks['Wiring'].Parts.Button")
+			appendfile("Properties.txt", "\n" .. "local Node = workspace.Map.Bricks['Wiring'].Parts.Node")
+			appendfile("Properties.txt", "\n" .. "local Hex_Digit = workspace.Map.Bricks['Wiring'].Parts['Hex Digit']")
+			appendfile("Properties.txt", "\n")
+			appendfile("Properties.txt", "\n" .. "local Timer = workspace.Map.Bricks['Wiring'].Parts.Gates.Timer")
+			appendfile("Properties.txt", "\n" .. "local Repeater = workspace.Map.Bricks['Wiring'].Parts.Gates.Repeater")
+			appendfile("Properties.txt", "\n" .. "local Random_1 = workspace.Map.Bricks['Wiring'].Parts.Gates.Random")
+			appendfile("Properties.txt", "\n" .. "local VelocitySensor = workspace.Map.Bricks['Sensors'].Parts.VelocitySensor")
+			appendfile("Properties.txt", "\n" .. "local ColorSensor = workspace.Map.Bricks['Sensors'].Parts.ColorSensor")
+			appendfile("Properties.txt", "\n" .. "local RaycastSensor = workspace.Map.Bricks['Sensors'].Parts.RaycastSensor")
+			appendfile("Properties.txt", "\n" .. "local ChatSensor = workspace.Map.Bricks['Sensors'].Parts.ChatSensor")
+			appendfile("Properties.txt", "\n" .. "local PressureSensor = workspace.Map.Bricks['Sensors'].Parts.PressureSensor")
+			appendfile("Properties.txt", "\n" .. "local PlayerSensor = workspace.Map.Bricks['Sensors'].Parts.PlayerSensor")
+			appendfile("Properties.txt", "\n" .. "local HeightSensor = workspace.Map.Bricks['Sensors'].Parts.HeightSensor")
+			appendfile("Properties.txt", "\n" .. "local OrientationSensor = workspace.Map.Bricks['Sensors'].Parts.OrientationSensor")
+			appendfile("Properties.txt", "\n" .. "local SpeedSensor = workspace.Map.Bricks['Sensors'].Parts.SpeedSensor")
+			appendfile("Properties.txt", "\n" .. "local Light = workspace.Map.Bricks['Light Parts (Colorable)'].Parts.Light")
+			appendfile("Properties.txt", "\n" .. "local Glue = workspace.Map.Bricks['Mechanicals']['Glue Block'].Glue")
+			appendfile("Properties.txt", "\n" .. "local Detach = workspace.Map.Bricks['Mechanicals']['Decoupler'].Detach")
+			appendfile("Properties.txt", "\n" .. "local WireServo = workspace.Map.Bricks['Mechanicals']['Servo Motor'].WireServo")
+			appendfile("Properties.txt", "\n" .. "local WireMotor = workspace.Map.Bricks['Mechanicals']['Wire Motor'].WireMotor")
+			appendfile("Properties.txt", "\n" .. "local LinearThruster = workspace.Map.Bricks['Mechanicals']['Linear Thruster'].LinearThruster")
+			appendfile("Properties.txt", "\n" .. "local LinearMotor = workspace.Map.Bricks['Mechanicals']['Linear Motor'].LinearMotor")
+			appendfile("Properties.txt", "\n" .. "local Motor = workspace.Map.Bricks['Building Bricks']['Motors'].Motor")
+			appendfile("Properties.txt", "\n" .. "local LinearHover = workspace.Map.Bricks['Mechanicals']['Linear Hover'].LinearHover")
+			appendfile("Properties.txt", "\n" .. "local Delete = workspace.Map.Bricks['Mechanicals']['Delete Block'].Delete")
+			appendfile("Properties.txt", "\n" .. "local Pulley = workspace.Map.Bricks['Mechanicals']['Pulley'].Pulley")
+			appendfile("Properties.txt", "\n" .. "local Adaptive = workspace.Map.Bricks['Adaptive Hover (Stable)'].Adaptive")
+			appendfile("Properties.txt", "\n" .. "local Explosive = workspace.Map.Bricks['Explosive Brick'].Explosive")
+			appendfile("Properties.txt", "\n" .. "local Parachute = workspace.Map.Bricks['Parachute'].Parachute")
+			appendfile("Properties.txt", "\n" .. "local Levitator = workspace.Map.Bricks['Levitator'].Levitator")
+			appendfile("Properties.txt", "\n" .. "local Collision = workspace.Map.Bricks['Collision Bricks']['Parts'].Collision")
+			appendfile("Properties.txt", "\n" .. "local Anchor = workspace.Map.Bricks['Anchored Bricks']['Parts'].Anchor")
+			appendfile("Properties.txt", "\n" .. "local Ghost = workspace.Map.Bricks['Ghost Bricks']['Parts'].Ghost")
+			appendfile("Properties.txt", "\n" .. "local VehicleSeat = workspace.Map.Bricks['Vehicle Seats']['Seats'].VehicleSeat")
+			appendfile("Properties.txt", "\n" .. "local Seat = workspace.Map.Bricks['Seats'].Seat")
+			appendfile("Properties.txt", "\n" .. "local Trampoline = workspace.Map.Bricks['Trampoline Bricks']['Parts'].Trampoline")
+			appendfile("Properties.txt", "\n" .. "local TrussPart = workspace.Map.Bricks['Trusses'].TrussPart")
+			appendfile("Properties.txt", "\n" .. "local Conveyor = workspace.Map.Bricks['Roller-Coaster Pieces']['250'].Conveyor")
+			appendfile("Properties.txt", "\n" .. "local Thruster = workspace.Map.Bricks['Thrusters']['Thrusters'].Thruster")
+			appendfile("Properties.txt", "\n" .. "local HeadMesh = workspace.Map.Bricks['Black Bricks']['Parts'].HeadMesh")
+			appendfile("Properties.txt", "\n" .. "local SphereMesh = workspace.Map.Bricks['Black Bricks']['Parts'].SphereMesh")
+			appendfile("Properties.txt", "\n" .. "local ConeMesh = workspace.Map.Bricks['Black Bricks']['Parts'].ConeMesh")
+			appendfile("Properties.txt", "\n" .. "local BevelMesh = workspace.Map.Bricks['Black Bricks']['Parts'].BevelMesh")
+
+
+			appendfile("Properties.txt", "\n" .. "tob = {")
+					
+			appendfile("Properties.txt", "\n" .. " Part = workspace.Map.Bricks['Black Bricks'].Parts.Part,")
+			appendfile("Properties.txt", "\n" .. " Sphere = workspace.Map.Bricks['Rocket Parts'].Parts.Sphere,")
+			appendfile("Properties.txt", "\n" .. " Wedge = workspace.Map.Bricks['Triangles'].Green.Wedge,")
+			appendfile("Properties.txt", "\n" .. " And = workspace.Map.Bricks['Wiring'].Parts.Gates.And,")
+			appendfile("Properties.txt", "\n" .. " Or = workspace.Map.Bricks['Wiring'].Parts.Gates.Or,")
+			appendfile("Properties.txt", "\n" .. " Nor = workspace.Map.Bricks['Wiring'].Parts.Gates.Nor,")
+			appendfile("Properties.txt", "\n" .. " Nand = workspace.Map.Bricks['Wiring'].Parts.Gates.Nand,")
+			appendfile("Properties.txt", "\n" .. " Xor = workspace.Map.Bricks['Wiring'].Parts.Gates.Xor,")
+			appendfile("Properties.txt", "\n" .. " Not = workspace.Map.Bricks['Wiring'].Parts.Gates.Not,")
+			appendfile("Properties.txt", "\n" .. " Xnor = workspace.Map.Bricks['Wiring'].Parts.Gates.Xnor,")
+			appendfile("Properties.txt", "\n" .. " Delay_1 = workspace.Map.Bricks['Wiring'].Parts.Gates.Delay,")
+			appendfile("Properties.txt", "\n" .. " Switch = workspace.Map.Bricks['Wiring'].Parts.Switch,")
+			appendfile("Properties.txt", "\n" .. " Button = workspace.Map.Bricks['Wiring'].Parts.Button,")
+			appendfile("Properties.txt", "\n" .. " Node = workspace.Map.Bricks['Wiring'].Parts.Node,")
+			appendfile("Properties.txt", "\n" .. " Hex_Digit = workspace.Map.Bricks['Wiring'].Parts['Hex Digit'],")
+			appendfile("Properties.txt", "\n")
+			appendfile("Properties.txt", "\n" .. " Timer = workspace.Map.Bricks['Wiring'].Parts.Gates.Timer,")
+			appendfile("Properties.txt", "\n" .. " Repeater = workspace.Map.Bricks['Wiring'].Parts.Gates.Repeater,")
+			appendfile("Properties.txt", "\n" .. " Random_1 = workspace.Map.Bricks['Wiring'].Parts.Gates.Random,")
+			appendfile("Properties.txt", "\n" .. " VelocitySensor = workspace.Map.Bricks['Sensors'].Parts.VelocitySensor,")
+			appendfile("Properties.txt", "\n" .. " ColorSensor = workspace.Map.Bricks['Sensors'].Parts.ColorSensor,")
+			appendfile("Properties.txt", "\n" .. " RaycastSensor = workspace.Map.Bricks['Sensors'].Parts.RaycastSensor,")
+			appendfile("Properties.txt", "\n" .. " ChatSensor = workspace.Map.Bricks['Sensors'].Parts.ChatSensor,")
+			appendfile("Properties.txt", "\n" .. " PressureSensor = workspace.Map.Bricks['Sensors'].Parts.PressureSensor,")
+			appendfile("Properties.txt", "\n" .. " PlayerSensor = workspace.Map.Bricks['Sensors'].Parts.PlayerSensor,")
+			appendfile("Properties.txt", "\n" .. " HeightSensor = workspace.Map.Bricks['Sensors'].Parts.HeightSensor,")
+			appendfile("Properties.txt", "\n" .. " OrientationSensor = workspace.Map.Bricks['Sensors'].Parts.OrientationSensor,")
+			appendfile("Properties.txt", "\n" .. " SpeedSensor = workspace.Map.Bricks['Sensors'].Parts.SpeedSensor,")
+			appendfile("Properties.txt", "\n" .. " Light = workspace.Map.Bricks['Light Parts (Colorable)'].Parts.Light,")
+			appendfile("Properties.txt", "\n" .. " Glue = workspace.Map.Bricks['Mechanicals']['Glue Block'].Glue,")
+			appendfile("Properties.txt", "\n" .. " Detach = workspace.Map.Bricks['Mechanicals']['Decoupler'].Detach,")
+			appendfile("Properties.txt", "\n" .. " WireServo = workspace.Map.Bricks['Mechanicals']['Servo Motor'].WireServo,")
+			appendfile("Properties.txt", "\n" .. " WireMotor = workspace.Map.Bricks['Mechanicals']['Wire Motor'].WireMotor,")
+			appendfile("Properties.txt", "\n" .. " LinearThruster = workspace.Map.Bricks['Mechanicals']['Linear Thruster'].LinearThruster,")
+			appendfile("Properties.txt", "\n" .. " LinearMotor = workspace.Map.Bricks['Mechanicals']['Linear Motor'].LinearMotor,")
+			appendfile("Properties.txt", "\n" .. " Motor = workspace.Map.Bricks['Building Bricks']['Motors'].Motor,")
+			appendfile("Properties.txt", "\n" .. " LinearHover = workspace.Map.Bricks['Mechanicals']['Linear Hover'].LinearHover,")
+			appendfile("Properties.txt", "\n" .. " Delete = workspace.Map.Bricks['Mechanicals']['Delete Block'].Delete,")
+			appendfile("Properties.txt", "\n" .. " Pulley = workspace.Map.Bricks['Mechanicals']['Pulley'].Pulley,")
+			appendfile("Properties.txt", "\n" .. " Adaptive = workspace.Map.Bricks['Adaptive Hover (Stable)'].Adaptive,")
+			appendfile("Properties.txt", "\n" .. " Explosive = workspace.Map.Bricks['Explosive Brick'].Explosive,")
+			appendfile("Properties.txt", "\n" .. " Parachute = workspace.Map.Bricks['Parachute'].Parachute,")
+			appendfile("Properties.txt", "\n" .. " Levitator = workspace.Map.Bricks['Levitator'].Levitator,")
+			appendfile("Properties.txt", "\n" .. " Collision = workspace.Map.Bricks['Collision Bricks']['Parts'].Collision,")
+			appendfile("Properties.txt", "\n" .. " Anchor = workspace.Map.Bricks['Anchored Bricks']['Parts'].Anchor,")
+			appendfile("Properties.txt", "\n" .. " Ghost = workspace.Map.Bricks['Ghost Bricks']['Parts'].Ghost,")
+			appendfile("Properties.txt", "\n" .. " VehicleSeat = workspace.Map.Bricks['Vehicle Seats']['Seats'].VehicleSeat,")
+			appendfile("Properties.txt", "\n" .. " Seat = workspace.Map.Bricks['Seats'].Seat,")
+			appendfile("Properties.txt", "\n" .. " Trampoline = workspace.Map.Bricks['Trampoline Bricks']['Parts'].Trampoline,")
+			appendfile("Properties.txt", "\n" .. " TrussPart = workspace.Map.Bricks['Trusses'].TrussPart,")
+			appendfile("Properties.txt", "\n" .. " Conveyor = workspace.Map.Bricks['Roller-Coaster Pieces']['250'].Conveyor,")
+			appendfile("Properties.txt", "\n" .. " Thruster = workspace.Map.Bricks['Thrusters']['Thrusters'].Thruster,")
+			appendfile("Properties.txt", "\n" .. " HeadMesh = workspace.Map.Bricks['Black Bricks']['Parts'].HeadMesh,")
+			appendfile("Properties.txt", "\n" .. " SphereMesh = workspace.Map.Bricks['Black Bricks']['Parts'].SphereMesh,")
+			appendfile("Properties.txt", "\n" .. " ConeMesh = workspace.Map.Bricks['Black Bricks']['Parts'].ConeMesh,")
+			appendfile("Properties.txt", "\n" .. " BevelMesh = workspace.Map.Bricks['Black Bricks']['Parts'].BevelMesh")
+
+			appendfile("Properties.txt", "\n" .. "}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+			appendfile("Properties.txt", "\n")
+			appendfile("Properties.txt", "\n" .. "local Hover")
+			appendfile("Properties.txt", "\n" .. "local Air")
+			appendfile("Properties.txt", "\n" .. "local Water")
+			appendfile("Properties.txt", "\n" .. "local Wing")
+			appendfile("Properties.txt", "\n" .. "local Camera")
+			appendfile("Properties.txt", "\n" .. "local Cylinder")
+			appendfile("Properties.txt", "\n" .. "local CornerWedge")
+			appendfile("Properties.txt", "\n" .. "local CornerWedge2")
+			appendfile("Properties.txt", "\n")
+			appendfile("Properties.txt", "\n" .. "local InputI = CFrame.new(1.80802083, 0.25, 0.44424665, 0, -1, 0, 1, 0, -0, 0, 0, 1)")
+			appendfile("Properties.txt", "\n" .. "local InputII = CFrame.new(1.80555654, 0.24999994, -0.444556385, 0, -1, 0, 1, 0, -0, 0, 0, 1)")
+			appendfile("Properties.txt", "\n" .. "local MidInput = CFrame.new(1.80232978, 0.25, -0.00449230149, 0, -1, 0, 1, 0, -0, 0, 0, 1) ")
+			appendfile("Properties.txt", "\n" .. "local MidInput2 = CFrame.new(1.56786263, 0.25, -0.0371489711, 0, -1, 0, 1, 0, -0, 0, 0, 1)")
+			appendfile("Properties.txt", "\n" .. "local SwitchInput = CFrame.new(0, 0, 1.10000002, 0, 0, 1, 0, 1, -0, -1, 0, 0)")
+			appendfile("Properties.txt", "\n" .. "local NodeInput = CFrame.new(1.05233002, 0, -0.00448608398, 0, -1, 0, 1, 0, -0, 0, 0, 1)")
+			appendfile("Properties.txt", "\n")
+			appendfile("Properties.txt", "\n" .. "			for _, Brick in pairs(workspace.Map.Bricks['Rocket Parts'].Parts:GetChildren()) do")
+			appendfile("Properties.txt", "\n" .. "				if Brick.Size.X == 5 then")
+			appendfile("Properties.txt", "\n" .. "					if Brick.Shape == Enum.PartType.Cylinder then")
+			appendfile("Properties.txt", "\n" .. "						Cylinder = Brick")
+			appendfile("Properties.txt", "\n" .. "						Brick.Name = 'Cylinder'")
+			appendfile("Properties.txt", "\n" .. "					end")
+			appendfile("Properties.txt", "\n" .. "				end")
+			appendfile("Properties.txt", "\n" .. "			end")
+			appendfile("Properties.txt", "\n" .. "			for _, Brick in pairs(workspace.Map.Bricks['Cameras']:GetChildren()) do")
+			appendfile("Properties.txt", "\n" .. "				if Brick.ClassName == 'Part' then")
+			appendfile("Properties.txt", "\n" .. "						Camera = Brick")
+			appendfile("Properties.txt", "\n" .. "				end")
+			appendfile("Properties.txt", "\n" .. "			end")
+			appendfile("Properties.txt", "\n" .. "			for _, Brick in pairs(workspace.Map.Bricks['Wing']:GetChildren()) do")
+			appendfile("Properties.txt", "\n" .. "				if Brick.ClassName == 'Part' then")
+			appendfile("Properties.txt", "\n" .. "						Wing = Brick")
+			appendfile("Properties.txt", "\n" .. "				end")
+			appendfile("Properties.txt", "\n" .. "			end")
+
+			appendfile("Properties.txt", "\n" .. "			for _, Brick in pairs(workspace.Map.Bricks['Wing']:GetChildren()) do")
+			appendfile("Properties.txt", "\n" .. "				if Brick.ClassName == 'Part' then")
+			appendfile("Properties.txt", "\n" .. "						Wing = Brick")
+			appendfile("Properties.txt", "\n" .. "				end")
+			appendfile("Properties.txt", "\n" .. "			end")
+
+
+			appendfile("Properties.txt", "\n")
+			appendfile("Properties.txt", "\n" .. "			for _, Brock in pairs(workspace.Map.Bricks['Air']:GetChildren()) do")
+			appendfile("Properties.txt", "\n" .. "				for i,v in pairs(Brock:GetChildren()) do")
+			appendfile("Properties.txt", "\n" .. "					if v.Name == 'Air' then")
+			appendfile("Properties.txt", "\n" .. "						Air = v")
+			appendfile("Properties.txt", "\n" .. "					end")
+			appendfile("Properties.txt", "\n" .. "				end	")
+			appendfile("Properties.txt", "\n" .. "			end")
+
+			appendfile("Properties.txt", "\n" .. "			for _, Brock in pairs(workspace.Map.Bricks['Hover Bricks']:GetChildren()) do")
+			appendfile("Properties.txt", "\n" .. "				for i,v in pairs(Brock:GetChildren()) do")
+			appendfile("Properties.txt", "\n" .. "					if v.Name == 'Hover' then")
+			appendfile("Properties.txt", "\n" .. "						Hover = v")
+			appendfile("Properties.txt", "\n" .. "					end")
+			appendfile("Properties.txt", "\n" .. "				end	")
+			appendfile("Properties.txt", "\n" .. "			end")
+
+			appendfile("Properties.txt", "\n" .. "			for _, Brock in pairs(workspace.Map.Bricks['Water']:GetChildren()) do")
+			appendfile("Properties.txt", "\n" .. "				for i,v in pairs(Brock:GetChildren()) do")
+			appendfile("Properties.txt", "\n" .. "					if v.Name == 'Water' then")
+			appendfile("Properties.txt", "\n" .. "						Water = v")
+			appendfile("Properties.txt", "\n" .. "					end")
+			appendfile("Properties.txt", "\n" .. "				end	")
+			appendfile("Properties.txt", "\n" .. "			end")
+
+			appendfile("Properties.txt", "\n" .. "			for _, Brock in pairs(workspace.Map.Bricks['Triangles'].Green:GetChildren()) do")
+			appendfile("Properties.txt", "\n" .. "				if Brock.ClassName == 'MeshPart' then")
+			appendfile("Properties.txt", "\n" .. "					CornerWedge = Brock")
+			appendfile("Properties.txt", "\n" .. "					Brock.Name = 'CornerWedge'")
+			appendfile("Properties.txt", "\n" .. "				end	")
+			appendfile("Properties.txt", "\n" .. "			end")
+
+			appendfile("Properties.txt", "\n")
+			appendfile("Properties.txt", "\n" .. "			for _, Brock2 in pairs(workspace.Map.Bricks['Triangles'].Green:GetChildren()) do")
+			appendfile("Properties.txt", "\n" .. "				if Brock2.Size.Y == 1 then")
+			appendfile("Properties.txt", "\n" .. "					if Brock2.ClassName == 'CornerWedgePart' then")
+			appendfile("Properties.txt", "\n" .. "						CornerWedge2 = Brock2")
+			appendfile("Properties.txt", "\n" .. "						Brock2.Name = 'CornerWedge2'")
+			appendfile("Properties.txt", "\n" .. "					end		")
+			appendfile("Properties.txt", "\n" .. "				end")
+			appendfile("Properties.txt", "\n" .. "			end")
+			appendfile("Properties.txt", "\n")
+			appendfile("Properties.txt", "\n" .. "			local function GTool(TName)")
+			appendfile("Properties.txt", "\n" .. "				local Tool = Player.Backpack:FindFirstChild(TName)")
+			appendfile("Properties.txt", "\n" .. "				local Tool2 = Player.Character:FindFirstChild(TName)")
+			appendfile("Properties.txt", "\n" .. "				if Tool then")
+			appendfile("Properties.txt", "\n" .. "					Tool.Parent = Player.Character")
+			appendfile("Properties.txt", "\n" .. "				elseif Tool2 then")
+			appendfile("Properties.txt", "\n" .. "					Tool2.Parent = Player.Backpack")
+			appendfile("Properties.txt", "\n" .. "				end")
+			appendfile("Properties.txt", "\n" .. "			end")
+			appendfile("Properties.txt", "\n" .. "GTool('Properties')")
+			appendfile("Properties.txt", "\n" .. "GTool('Brush')")
+			appendfile("Properties.txt", "\n" .. "GTool('Clone')")
+			appendfile("Properties.txt", "\n")			
+			appendfile("Properties.txt", "\n" .. "			for _, func in pairs(getgc()) do")
+			appendfile("Properties.txt", "\n" .. "				if type(func) == 'function' and islclosure(func) then")
+			appendfile("Properties.txt", "\n" .. "					local source = getfenv(func).script")
+			appendfile("Properties.txt", "\n" .. "					local constants = getconstants(func)")
+			appendfile("Properties.txt", "\n" .. "					local nextInt = table.find(constants, 'NextInteger')")
+			appendfile("Properties.txt", "\n" .. "					local seed = nextInt and constants[nextInt - 1]")
+			appendfile("Properties.txt", "\n" .. "					if seed and typeof(seed) == 'number' then")
+			appendfile("Properties.txt", "\n" .. "						clientSeeds[source.Name] = seed")
+			appendfile("Properties.txt", "\n" .. "					elseif source and source:IsDescendantOf(game) then")
+			appendfile("Properties.txt", "\n" .. "						if source.Name == 'Paint' then")
+			appendfile("Properties.txt", "\n" .. "							increments['Color'] = function()")
+			appendfile("Properties.txt", "\n" .. "                 		 	for i, v in pairs(debug.getupvalues(func)) do")
+			appendfile("Properties.txt", "\n" .. "                      	  if typeof(v) == 'number' then")
+			appendfile("Properties.txt", "\n" .. "                  	      	local increment = v + 1")
+			appendfile("Properties.txt", "\n" .. "                            	debug.setupvalue(func, i, increment)")
+			appendfile("Properties.txt", "\n" .. "						        return increment")
+			appendfile("Properties.txt", "\n" .. "						    end")
+			appendfile("Properties.txt", "\n" .. "	                    end")
+			appendfile("Properties.txt", "\n" .. "                   end")
+			appendfile("Properties.txt", "\n" .. "				else")
+			appendfile("Properties.txt", "\n" .. "							for _, upvalue in pairs(getupvalues(func)) do")
+			appendfile("Properties.txt", "\n" .. "								if typeof(upvalue) == 'Random' then")
+			appendfile("Properties.txt", "\n" .. "									serverSeeds[source.Name] = upvalue")
+			appendfile("Properties.txt", "\n" .. "									break")
+			appendfile("Properties.txt", "\n" .. "								end")
+			appendfile("Properties.txt", "\n" .. "							end")
+			appendfile("Properties.txt", "\n" .. "						end")
+			appendfile("Properties.txt", "\n" .. "					end")
+			appendfile("Properties.txt", "\n" .. "				end")
+			appendfile("Properties.txt", "\n" .. "			end")
+			appendfile("Properties.txt", "\n")
+			appendfile("Properties.txt", "\n" .. "			function getSeed(property)")
+			appendfile("Properties.txt", "\n" .. "				return serverSeeds[property]:NextInteger(0, clientSeeds[property])")
+			appendfile("Properties.txt", "\n" .. "			end")
+			appendfile("Properties.txt", "\n")
+			appendfile("Properties.txt", "\n" .. "			function copy(port, cFrame)")
+			appendfile("Properties.txt", "\n" .. "				local success, key, port = DragControlIer:InvokeServer('GetKey', port, true)")
+			appendfile("Properties.txt", "\n" .. "				if success then")
+			appendfile("Properties.txt", "\n" .. "					DragControlIer.Update:FireServer('Update', key, cFrame)")
+			appendfile("Properties.txt", "\n" .. "					DragControlIer.Update:FireServer('ClearKey', key)")
+			appendfile("Properties.txt", "\n" .. "				end")
+			appendfile("Properties.txt", "\n" .. "				return success and port")
+			appendfile("Properties.txt", "\n" .. "			end")
+			appendfile("Properties.txt", "\n")
+			appendfile("Properties.txt", "\n" .. "			function edit(port, property, ...)")
+			appendfile("Properties.txt", "\n" .. "				if increments[property] ~= nil then")
+			appendfile("Properties.txt", "\n" .. "   			    increment = 0")
+			appendfile("Properties.txt", "\n" .. "					ClientBridge.ClassicController:FireServer('Lasso', Vector3.new())")
+			appendfile("Properties.txt", "\n" .. "					ClientBridge.ClassicController:FireServer(property .. 'Start', increment, {[property] = ...})")
+			appendfile("Properties.txt", "\n" .. "					ClientBridge.ClassicController:FireServer(property, increment, {Part = port})")
+			appendfile("Properties.txt", "\n" .. "					ClientBridge.ClassicController:FireServer(property .. 'Stop', increment, {})")
+			appendfile("Properties.txt", "\n" .. "					ClientBridge.ClassicController:FireServer('Lasso')")
+			appendfile("Properties.txt", "\n" .. "				else")
+			appendfile("Properties.txt", "\n" .. "					local arguments = {port}")
+			appendfile("Properties.txt", "\n" .. "					for i, argument in pairs(table.pack(...)) do")
+			appendfile("Properties.txt", "\n" .. "						if type(i) == 'number' then")
+			appendfile("Properties.txt", "\n" .. "							table.insert(arguments, argument)")
+			appendfile("Properties.txt", "\n" .. "						end")
+			appendfile("Properties.txt", "\n" .. "					end")
+			appendfile("Properties.txt", "\n" .. "					if type(arguments[#arguments]) ~= 'table' then")
+			appendfile("Properties.txt", "\n" .. "						table.insert(arguments, {})")
+			appendfile("Properties.txt", "\n" .. "					end")
+			appendfile("Properties.txt", "\n" .. "					table.insert(arguments, getSeed(property))")
+			appendfile("Properties.txt", "\n" .. "					ClientBridge:FindFirstChild((property == 'CFrame' and 'Move') or property):FireServer(unpack(arguments))")
+			appendfile("Properties.txt", "\n" .. "				end")
+			appendfile("Properties.txt", "\n" .. "			end")
+			appendfile("Properties.txt", "\n")
+			appendfile("Properties.txt", "\n" .. "local function CreateNewPart(Positm,Sizee,Colo,Mat,Shapee,IsAnchoredd,PartNum)")
+			appendfile("Properties.txt", "\n" .. "	if SpawnDebounce == false then")
+			appendfile("Properties.txt", "\n" .. "			local realshape = tob[tostring(Shapee)] ")
+			appendfile("Properties.txt", "\n" .. "		if Shapee == 'Air' then")
+			appendfile("Properties.txt", "\n" .. "			realshape = Air")
+			appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Hover' then")
+			appendfile("Properties.txt", "\n" .. "			realshape = Hover")
+			appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Water' then")
+			appendfile("Properties.txt", "\n" .. "			realshape = Water")
+			appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Wing' then")
+			appendfile("Properties.txt", "\n" .. "			realshape = Wing")
+			appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Camera' then")
+			appendfile("Properties.txt", "\n" .. "			realshape = Camera")
+			appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Cylinder' then")
+			appendfile("Properties.txt", "\n" .. "			realshape = Cylinder")
+			appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'CornerWedge' then")
+			appendfile("Properties.txt", "\n" .. "			realshape = CornerWedge")
+			appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'CornerWedge2' then")
+			appendfile("Properties.txt", "\n" .. "			realshape = CornerWedge2")
+
+			appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Delay' then")
+			appendfile("Properties.txt", "\n" .. "			realshape = Delay_1")
+			appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Hex Digit' then")
+			appendfile("Properties.txt", "\n" .. "			realshape = Hex_Digit")
+			appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Random' then")
+			appendfile("Properties.txt", "\n" .. "			realshape = Random_1")
+
+
+			appendfile("Properties.txt", "\n" .. "		end")
+			appendfile("Properties.txt", "\n" .. "			SpawnDebounce = true")
+			appendfile("Properties.txt", "\n" .. "			port = copy(realshape)")
+			appendfile("Properties.txt", "\n" .. "			local CreatedWithTool = Instance.new('BoolValue')")
+			appendfile("Properties.txt", "\n" .. "			CreatedWithTool.Name = 'CWT'")
+			appendfile("Properties.txt", "\n" .. "			CreatedWithTool.Parent = port")
+			appendfile("Properties.txt", "\n" .. "			edit(port, 'Color', Colo)")
+			appendfile("Properties.txt", "\n" .. "			edit(port, 'Material', Mat)")
+			appendfile("Properties.txt", "\n" .. "			local seed = serverSeeds[property]:NextInteger(0, clientSeeds[property])")
+			appendfile("Properties.txt", "\n" .. "			ClientBridge.Resize:FireServer(port, Sizee, Positm, {}, seed)")
+			appendfile("Properties.txt", "\n" .. "			if IsAnchoredd == true then")
+			appendfile("Properties.txt", "\n" .. "				wait(0.18)")
+			appendfile("Properties.txt", "\n" .. "				repeat RequestPropertyChangeREMOTE:InvokeServer(port, 'Anchored', IsAnchoredd) until(port.Anchored)")
+			appendfile("Properties.txt", "\n" .. "			else")
+			appendfile("Properties.txt", "\n" .. "				wait(0.18)")
+			appendfile("Properties.txt", "\n" .. "			end")				
+			appendfile("Properties.txt", "\n" .. "			SpawnDebounce = false")
+			appendfile("Properties.txt", "\n" .. "		end")
+			appendfile("Properties.txt", "\n" .. "	end")
+			appendfile("Properties.txt", "\n"..'game.CoreGui.ExportImport.Frame.Frame.left2.Text ='.."'Total:"..totalparts.."'")
+
+			for i,v in pairs(workspace:GetChildren()) do
+				if v.ClassName == "Part" or v.Name == "Wedge" or v.Name == "Sphere" or v:IsA("MeshPart") or v.ClassName == "VehicleSeat" or v.ClassName == "Seat" then
+					if v:IsA("MeshPart") then
+						if v.Name == "Wedge" or v.Name == "CornerWedge" then
+							v.Name = "CornerWedge"
+						end
+					end
+					if v.ClassName == "CornerWedgePart" then
+						if v.Name == "Wedge" or v.Name == "CornerWedge" then
+							v.Name = "CornerWedge"
+						end
+					end
+					for l,m in pairs(v:GetChildren()) do
+						if m.Name == "Selection" then
+							if m.Visible == true then
+								local Rotation = m.Parent.Rotation
+								local x = Rotation.X
+								local y = Rotation.Y
+								local z = Rotation.Z
+								if m.Parent.Name == "Part" then
+									if m.Parent.Shape == Enum.PartType.Cylinder then
+										ShapeM = "Cylinder"
+									else
+										ShapeM = m.Parent.Name
 									end
-								end
-							end
-						end
-					end
-					appendfile("Properties.txt", "\n"..'game.CoreGui.ExportImport.Frame.Frame.left.Text = "Imported"')
-					game.CoreGui.ExportImport.Frame.Frame.left.Text = "Exported"
-				end)
-	
-				connection2 = mouse.Button1Down:Connect(function()
-					if equip then
-						local target = mouse.Target
-						if target and target.Locked == false then
-	
-							part = target
-							if target:FindFirstChild("Selection") then
-								if Toggled == false then
-									Toggled = true
-									target.Selection.Visible = true
-								elseif Toggled == true then
-									Toggled = false
-									target.Selection.Visible = false
-								end
-							else
-								local CreatedWithTool2 = Instance.new("SelectionBox")
-								CreatedWithTool2.Visible = false
-								CreatedWithTool2.Name = "Selection"
-								CreatedWithTool2.Parent = part
-								CreatedWithTool2.Adornee = part
-							end 
-	
-	
-						end
-					end
-				end)
-	
-			end)
-	
-	
-	
-			tool.Equipped:Connect(function()
-				local UserInputService = game:GetService("UserInputService")
-				local RunService = game:GetService("RunService")
-				local GuiService = game:GetService('GuiService')
-	
-	
-				local Inset = GuiService:GetGuiInset()
-				local Camera = workspace.CurrentCamera
-				local selectionFrame = script.Parent
-				local searchTable = workspace:GetChildren() --// array of searchable objs
-				local mouseDown = false
-				local lastPos 
-	
-	
-				local function HitPos(pos)
-					local unitRay =  Camera:ScreenPointToRay(pos.x, pos.y)
-					local result = workspace:Raycast(unitRay.Origin, unitRay.Direction * 1000)
-	
-					return  result and result.Position or unitRay.Origin
-				end
-	
-	
-				local function CalcSlope(vec)
-					local rel = Camera.CFrame:pointToObjectSpace(vec)
-					return Vector2.new(rel.x/-rel.z, rel.y/-rel.z)
-				end
-	
-	
-				local function Overlaps(cf, a1, a2)
-					local rel = Camera.CFrame:ToObjectSpace(cf)
-					local x, y = rel.x / -rel.z, rel.y / -rel.z
-	
-					return (a1.x) < x and x < (a2.x) 
-						and (a1.y < y and y < a2.y) and rel.z < 0 
-				end
-	
-	
-				local function Swap(a1, a2)
-					return Vector2.new(math.min(a1.x, a2.x), math.min(a1.y, a2.y)), 
-					Vector2.new(math.max(a1.x, a2.x), math.max(a1.y, a2.y))
-				end
-	
-	
-	
-				local function Search(objs, p1, p2)
-					local Found = {}
-					local a1 = CalcSlope(p1)
-					local a2 = CalcSlope(p2)
-	
-					a1, a2 = Swap(a1, a2)
-	
-					for _ ,obj in ipairs(objs) do
-						if obj.ClassName == "Part" or obj.Name == "Wedge" and obj.Locked == false then
-							local cf = obj:IsA("Model") and obj:GetBoundingBox() or obj.CFrame
-							if Overlaps(cf,a1, a2) then
-								print(obj)
-	
-								if obj:FindFirstChild("Selection") then
-									obj.Selection.Visible = true
 								else
-									local CreatedWithTool2 = Instance.new("SelectionBox")
-									CreatedWithTool2.Visible = true
-									CreatedWithTool2.Name = "Selection"
-									CreatedWithTool2.Parent = obj
-									CreatedWithTool2.Adornee = obj
+									ShapeM = m.Parent.Name
 								end
-	
-	
-	
-								table.insert(Found, obj)
+								if m.Parent.Name == "Random" then
+									ShapeM = "Random_1"
+								end
+								if m.Parent.Name == "Delay" then
+									ShapeM = "Delay_1"
+								end
+								if m.Parent.Name == "Hex Digit" then
+									ShapeM = "Hex_Digit"
+								end
+								--[[
+								if m.Parent.Material == Enum.Material.Plastic then
+									MaterialM = Enum.Material.SmoothPlastic
+								else
+									MaterialM = m.Parent.Material
+								end
+								]]
+								partnumberrr = partnumberrr + 1
+								appendfile("Properties.txt", "\n" .. "IsAnchored = ".. tostring(m.Parent.Anchored))
+								appendfile("Properties.txt", "\n" .. "Position = " .. "CFrame.new(" .. tostring(m.Parent.Position) .. ")")
+								appendfile("Properties.txt", "\n".."Rotation = " .. "CFrame.Angles(".."math.rad("..tostring(x).."),".."math.rad("..tostring(y).."),".."math.rad("..tostring(z)  ..")"     ..")")
+								appendfile("Properties.txt", "\n".."Color = " .. "Color3.new(" .. tostring(m.Parent.Color)..")")
+								appendfile("Properties.txt", "\n".."Size = " .. "Vector3.new(" .. tostring(m.Parent.Size)..")")
+								appendfile("Properties.txt", "\n".."Material = ".. tostring(MaterialM))
+								appendfile("Properties.txt", "\n".. "shape = ".. ShapeM..".Name")
+								appendfile("Properties.txt", "\n"..'game.CoreGui.ExportImport.Frame.Frame.left.Text = "Parts imported: '..partnumberrr..'"')
+								appendfile("Properties.txt", "\n"..'CreateNewPart(Position * Rotation, Size, Color, Material, shape, IsAnchored,PartNum)')
+								appendfile("Properties.txt", "\n")
 							end
 						end
 					end
-					return Found
 				end
-	
-	
-	
-				UserInputService.InputBegan:Connect(function(input) 
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then
-						if equip then
-							lastPos = Vector2.new(input.Position.x, input.Position.y) 
-							mouseDown = true
-						end
-	
-					end
-				end)
-	
-	
-				UserInputService.InputEnded:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then
-						if equip then
-							local pos = Vector2.new(input.Position.x, input.Position.y)
-							local result = Search(searchTable, HitPos(lastPos), HitPos(pos))
-							mouseDown = false; selectionFrame.Visible = false 
-						end
-	
-	
-					end
-				end)
-	
-	
-				RunService.Heartbeat:Connect(function() --// render selectionFrame gui
-					if equip then
-						if mouseDown then
-							local pos = UserInputService:GetMouseLocation()
-	
-							local lastPos = lastPos + Inset
-							local Center = ((lastPos+ pos) * .5) - Inset --// if no inset remove ' - Inset'
-	
-							local DistX = math.abs(lastPos.X - pos.X)  
-							local DistY = math.abs(lastPos.Y - pos.Y)  
-	
-							selectionFrame.Position = UDim2.new(0, Center.X,0, Center.Y)
-							selectionFrame.Size =  UDim2.new(0, DistX,0, DistY)
-	
-							selectionFrame.Visible = true --// if not visible
+			end
+			appendfile("Properties.txt", "\n"..'game.CoreGui.ExportImport.Frame.Frame.left.Text = "Imported"')
+			appendfile("Properties.txt", "\n" .. "GTool('Properties')")
+			appendfile("Properties.txt", "\n" .. "GTool('Brush')")
+			appendfile("Properties.txt", "\n" .. "GTool('Clone')")
+			game.CoreGui.ExportImport.Frame.Frame.left.Text = "Exported"
+		end)
+
+		connection2 = mouse.Button1Down:Connect(function()
+			if equip then
+				local target = mouse.Target
+				if target.Locked == true then
+					for i,v in pairs(workspace:GetChildren()) do
+						if v:FindFirstChild("Selection") then
+							v.Selection.Visible = false
 						end
 					end
-	
-				end)
-	
-			end)
-	
-			tool.Unequipped:Connect(function()
-				equip = false
-				connection:Disconnect()
-				connection2:Disconnect()
-			end)
-	
-			tool.Parent = plr.Backpack
-	
-	
-	
-	
-	
+				end
+				if target and target.Locked == false then
+					part = target
+					if target:FindFirstChild("Selection") then
+						if Toggled == false then
+							Toggled = true
+							target.Selection.Visible = true
+						elseif Toggled == true then
+							Toggled = false
+							target.Selection.Visible = false
+						end
+					else
+						local CreatedWithTool2 = Instance.new("SelectionBox")
+						CreatedWithTool2.Visible = false
+						CreatedWithTool2.Name = "Selection"
+						CreatedWithTool2.Parent = part
+						CreatedWithTool2.Adornee = part
+					end 
+				end
+			end
+		end)
+	end)
+
+
+
+	tool.Equipped:Connect(function()
+		TextButton.Visible = true
+		for i,v in pairs(workspace:GetChildren()) do
+			if v:FindFirstChild("Selection") then
+				v.Selection.Visible = false
+			end
 		end
-		coroutine.wrap(RPUJM_fake_script)()
-	
-	
-	end)
-end
-coroutine.wrap(VSPW_fake_script)()
-local function GTWU_fake_script() -- Impo.LocalScript 
-	local script = Instance.new('LocalScript', Impo)
+		local UserInputService = game:GetService("UserInputService")
+		local RunService = game:GetService("RunService")
+		local GuiService = game:GetService('GuiService')
+		local Inset = GuiService:GetGuiInset()
+		local Camera = workspace.CurrentCamera
+		local selectionFrame = script.Parent
+		local searchTable = workspace:GetChildren() --// array of searchable objs
+		local mouseDown = false
+		local lastPos 
+		local function HitPos(pos)
+			local unitRay =  Camera:ScreenPointToRay(pos.x, pos.y)
+			local result = workspace:Raycast(unitRay.Origin, unitRay.Direction * 1000)
+			return  result and result.Position or unitRay.Origin
+		end
+		local function CalcSlope(vec)
+			local rel = Camera.CFrame:pointToObjectSpace(vec)
+			return Vector2.new(rel.x/-rel.z, rel.y/-rel.z)
+		end
+		local function Overlaps(cf, a1, a2)
+			local rel = Camera.CFrame:ToObjectSpace(cf)
+			local x, y = rel.x / -rel.z, rel.y / -rel.z
 
-	script.Parent.MouseButton1Click:Connect(function()
-		loadfile("Properties.txt")()
-	end)
-end
-coroutine.wrap(GTWU_fake_script)()
-local function SKCGQTK_fake_script() -- TextButton.LocalScript 
-	local script = Instance.new('LocalScript', TextButton)
+			return (a1.x) < x and x < (a2.x) 
+				and (a1.y < y and y < a2.y) and rel.z < 0 
+		end
+		local function Swap(a1, a2)
+			return Vector2.new(math.min(a1.x, a2.x), math.min(a1.y, a2.y)), 
+			Vector2.new(math.max(a1.x, a2.x), math.max(a1.y, a2.y))
+		end
+		local function Search(objs, p1, p2)
+			local Found = {}
+			local a1 = CalcSlope(p1)
+			local a2 = CalcSlope(p2)
+			a1, a2 = Swap(a1, a2)
+			for _ ,obj in ipairs(objs) do
+				if obj.ClassName == "Part" or obj.Name == "Wedge" or obj.Name == "Sphere" or obj:IsA("MeshPart") or obj.ClassName == "VehicleSeat" or obj.ClassName == "Seat" and obj.Locked == false or obj.Name == "TrussPart" or obj.ClassName == "CornerWedgePart" then
+					local cf = obj:IsA("Model") and obj:GetBoundingBox() or obj.CFrame
+					if Overlaps(cf,a1, a2) then
+						if obj:FindFirstChild("Selection") then
+							obj.Selection.Visible = true
+						else
+							local CreatedWithTool2 = Instance.new("SelectionBox")
+							CreatedWithTool2.Visible = true
+							CreatedWithTool2.Name = "Selection"
+							CreatedWithTool2.Parent = obj
+							CreatedWithTool2.Adornee = obj
+						end
+						table.insert(Found, obj)
+					end
+				end
+			end
+			return Found
+		end
+		UserInputService.InputBegan:Connect(function(input) 
+			if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				if equip then
+					lastPos = Vector2.new(input.Position.x, input.Position.y) 
+					mouseDown = true
+				end
 
-	script.Parent.MouseButton1Click:Connect(function()
-		script.Parent.Parent.Parent:Destroy()
+			end
+		end)
+		UserInputService.InputEnded:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				if equip then
+					local pos = Vector2.new(input.Position.x, input.Position.y)
+					local result = Search(searchTable, HitPos(lastPos), HitPos(pos))
+					mouseDown = false; selectionFrame.Visible = false 
+				end
+			end
+		end)
+		RunService.Heartbeat:Connect(function() --// render selectionFrame gui
+			if equip then
+				if mouseDown then
+					local pos = UserInputService:GetMouseLocation()
+					local lastPos = lastPos + Inset
+					local Center = ((lastPos+ pos) * .5) - Inset --// if no inset remove ' - Inset'
+					local DistX = math.abs(lastPos.X - pos.X)  
+					local DistY = math.abs(lastPos.Y - pos.Y)  
+					selectionFrame.Position = UDim2.new(0, Center.X,0, Center.Y)
+					selectionFrame.Size =  UDim2.new(0, DistX,0, DistY)
+					selectionFrame.Visible = true --// if not visible
+				end
+			end
+		end)
 	end)
+	tool.Unequipped:Connect(function()
+		TextButton.Visible = false
+		equip = false
+		connection:Disconnect()
+		connection2:Disconnect()
+		for i,v in pairs(workspace:GetChildren()) do
+			if v:FindFirstChild("Selection") then
+				v.Selection.Visible = false
+			end
+		end
+	end)
+	tool.Parent = plr.Backpack
 end
-coroutine.wrap(SKCGQTK_fake_script)()
+
+coroutine.wrap(RPUJM_fake_script)()
+
