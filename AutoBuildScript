@@ -19,7 +19,7 @@ local TextButton = Instance.new("TextButton")
 --Properties:
 
 ExportImport.Name = "ExportImport"
-ExportImport.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ExportImport.Parent = game.CoreGui
 ExportImport.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ExportImport.ResetOnSpawn = false
 
