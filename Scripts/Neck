@@ -1,0 +1,114 @@
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local ClientBridge = game:GetService("ReplicatedStorage").ClientBridge
+local DragControlIer = ClientBridge.DragControlIer
+local serverSeeds = {}
+local clientSeeds = {}
+local increments = {Material = function() return 0 end, Surface = function() return 0 end}
+
+for _, func in pairs(getgc()) do
+    if type(func) == "function" and islclosure(func) then
+        local source = getfenv(func).script
+        local constants = getconstants(func)
+        local nextInt = table.find(constants, "NextInteger")
+        local seed = nextInt and constants[nextInt - 1]
+        if seed and typeof(seed) == "number" then
+            clientSeeds[source.Name] = seed
+        elseif source and source:IsDescendantOf(game) then
+            if source.Name == "Paint" then
+                increments["Color"] = function()
+                    local increment = getupvalue(func, 5) + 1
+                    setupvalue(func, 5, increment)
+                    return increment
+                end
+            else
+                for _, upvalue in pairs(getupvalues(func)) do
+                    if typeof(upvalue) == "Random" then
+                        serverSeeds[source.Name] = upvalue
+                        break
+                    end
+                end
+            end
+        end
+    end
+end
+
+function getSeed(property)
+    return serverSeeds[property]:NextInteger(0, clientSeeds[property])
+end
+
+function copy(part, cFrame)
+    local clone = Player.Backpack:FindFirstChild("Clone")
+    if clone then
+        clone.Parent = Player.Character
+        task.wait()
+    end
+    local success, key, part = DragControlIer:InvokeServer("GetKey", part, true)
+    if success then
+        DragControlIer.Update:FireServer("Update", key, cFrame)
+        DragControlIer.Update:FireServer("ClearKey", key)
+    end
+    if clone then
+        clone.Parent = Player.Backpack
+    end
+    return success and part
+end
+
+function edit(part, property, ...)
+    local brush = Player.Backpack:FindFirstChild("Brush")
+    if brush then
+        brush.Parent = Player.Character
+        task.wait()
+    end
+    if increments[property] ~= nil then
+        local increment = increments[property]()
+        ClientBridge.ClassicController:FireServer("Lasso", Vector3.new())
+        ClientBridge.ClassicController:FireServer(property .. "Start", increment, {[property] = ...})
+        ClientBridge.ClassicController:FireServer(property, increment, {Part = part})
+        ClientBridge.ClassicController:FireServer(property .. "Stop", increment, {})
+        ClientBridge.ClassicController:FireServer("Lasso")
+    else
+        local arguments = {part}
+        for i, argument in pairs(table.pack(...)) do
+            if type(i) == "number" then
+                table.insert(arguments, argument)
+            end
+        end
+        if type(arguments[#arguments]) ~= "table" then
+            table.insert(arguments, {})
+        end
+        table.insert(arguments, getSeed(property))
+        ClientBridge:FindFirstChild((property == "CFrame" and "Move") or property):FireServer(unpack(arguments))
+    end
+    if brush then
+        brush.Parent = Player.Backpack
+    end
+end
+
+local name = "jun"
+
+local character
+for _, player in pairs(Players:GetPlayers()) do
+    if player.Name:lower():sub(1, name:len()) == name:lower() then
+        character = player.Character
+    end
+end
+
+local length = 10
+
+local character = Player.Character
+
+
+local part
+for _, brick in pairs(workspace.Map.Bricks["Rocket Parts"].Parts:GetChildren()) do
+    if brick.Shape == Enum.PartType.Cylinder then
+        part = copy(brick, character.Head.CFrame)
+        break
+    end
+end
+
+edit(part, "Color", character.Head.Color)
+
+task.wait(0.03)
+
+edit(part, "Resize", Vector3.new(math.abs(length), 0.8, 0.8), character.Head.CFrame, {{ClassName = "Weld", Part0 = character.Head, Part1 = character.Torso, C0 = CFrame.new(0, -length - 1.5, 0), C1 = CFrame.new()}, {ClassName = "Weld", Part0 = part, Part1 = character.Torso, C0 = CFrame.new((length / 2) + 1, 0, 0) * CFrame.Angles(0, 0, math.rad(90)), C1 = CFrame.new()}})
