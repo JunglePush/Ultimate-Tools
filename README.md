@@ -8,6 +8,7 @@ Abusing these scripts will lead to a ban use them correctly and wisely.
 
 loadstrings:
 loadstring(game:HttpGet('https://raw.githubusercontent.com/JunglePush/Ultimate-Export/main/AutoBuildScript'))() -- export tool
+loadstring(game:HttpGet('https://raw.githubusercontent.com/JunglePush/Ultimate-Tools/main/Easy%20Lock'))() -- easy lock tool
 
 if you have clicked send to file, execute that code below.
 loadfile("Properties.txt")()
