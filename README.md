@@ -1,11 +1,10 @@
-# Ultimate-Export
+# Ultimate-Tools
 
-For you lot ubers that wanted export import.. We made one! now the thing is that this is still being tested by us and will be open for all ubers
+What is ultimate tools?
+ultimate tools are scripts that are designed to help with the normal life of a UB player for example the auto lock tool that will auto lock ur build!
 
-known issues:
-noticed that there is a issue with upvalues so sometimes this can break (say re and execute, repeat it until it works, plus not sure if its synapse x or something)
-
-Any users that use this script for trolling/greifing/etc will be reported and possibly banned you've been warned!
+info:
+Abusing these scripts will lead to a ban use them correctly and wisely.
 
 loadstrings:
 loadstring(game:HttpGet('https://raw.githubusercontent.com/JunglePush/Ultimate-Export/main/AutoBuildScript'))() -- export tool
