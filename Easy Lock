@@ -1,0 +1,219 @@
+local tool = Instance.new("Tool")
+local main = Instance.new("ScreenGui")
+local selectionFrame = Instance.new("Frame")
+local TextButton = Instance.new("TextButton")
+local TextButton2 = Instance.new("TextButton")
+
+main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+selectionFrame.Name = "selectionFrame"
+selectionFrame.Parent = main
+selectionFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+selectionFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+selectionFrame.BackgroundTransparency = 0.800
+
+TextButton.Parent = main
+TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.Position = UDim2.new(0.434367537, 0, 0.0448484831, 0)
+TextButton.Size = UDim2.new(0, 200, 0, 40)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = "Lock"
+TextButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.TextSize = 14.000
+TextButton.Visible = false
+
+TextButton2.Parent = main
+TextButton2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton2.Position = UDim2.new(0.434367537, 0, 0.0898484831, 0)
+TextButton2.Size = UDim2.new(0, 200, 0, 40)
+TextButton2.Font = Enum.Font.SourceSans
+TextButton2.Text = "Unlock"
+TextButton2.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton2.TextSize = 14.000
+TextButton2.Visible = false
+
+tool.RequiresHandle = false
+tool.Name = "Easy Lock"
+
+local script = Instance.new('LocalScript', selectionFrame)
+local plr = game:GetService("Players").LocalPlayer
+local Player = game:GetService("Players").LocalPlayer
+local mouse = plr:GetMouse()
+local ClientBridge = game:GetService("ReplicatedStorage").ClientBridge
+
+local connection
+local connection2
+local connection3
+local part
+local equip = false
+local Toggled = false
+
+local function GTool(TName)
+    local Tool = Player.Backpack:FindFirstChild(TName)
+    local Tool2 = Player.Character:FindFirstChild(TName)
+    if Tool then
+        Tool.Parent = Player.Character
+    elseif Tool2 then
+        Tool2.Parent = Player.Backpack
+    end
+end
+
+local function clearselect()
+    for i,v in pairs(workspace:GetChildren()) do
+        if v:FindFirstChild("Selection") then
+            v.Selection.Visible = false
+        end
+    end
+end
+
+tool.Equipped:Connect(function()
+    connection3 = TextButton.MouseButton1Click:Connect(function()
+        GTool("VIP")
+        for i,v in pairs(workspace:GetChildren()) do
+            if v:FindFirstChild("Selection") then
+                if v.Selection.Visible then
+                repeat ClientBridge.RequestPropertyChange:InvokeServer(v, "Locked", true) until(v.Locked)
+                end
+            end
+        end
+        GTool("VIP")
+    end)
+
+    connection = TextButton2.MouseButton1Click:Connect(function()
+        GTool("VIP")
+        for i,v in pairs(workspace:GetChildren()) do
+            if v:FindFirstChild("Selection") then
+                if v.Selection.Visible then
+                repeat ClientBridge.RequestPropertyChange:InvokeServer(v, "Locked", false) until(v.Locked == false)
+                end
+            end
+        end
+        GTool("VIP")
+    end)
+    TextButton.Visible = true
+    TextButton2.Visible = true
+    equip = true
+    connection2 = mouse.Button1Down:Connect(function()
+        if equip then
+            local target = mouse.Target
+            if target.Locked == true then
+                clearselect()
+            end
+            if target and target.Locked == false then
+                if target:FindFirstChild("Selection") then
+                    target.Selection.Visible = not target.Selection.Visible
+                else
+                    local Selection = Instance.new("SelectionBox")
+                    Selection.Visible = true
+                    Selection.Name = "Selection"
+                    Selection.Parent = target
+                    Selection.Adornee = target
+                    Selection.LineThickness = 0.02
+                end 
+            end
+        end
+    end)
+end)
+
+
+
+tool.Equipped:Connect(function()
+    clearselect()
+    local UserInputService = game:GetService("UserInputService")
+    local RunService = game:GetService("RunService")
+    local GuiService = game:GetService('GuiService')
+    local Inset = GuiService:GetGuiInset()
+    local Camera = workspace.CurrentCamera
+    local selectionFrame = script.Parent
+    local searchTable = workspace:GetChildren() --// array of searchable objs
+    local mouseDown = false
+    local lastPos 
+    local function HitPos(pos)
+        local unitRay =  Camera:ScreenPointToRay(pos.x, pos.y)
+        local result = workspace:Raycast(unitRay.Origin, unitRay.Direction * 1000)
+        return  result and result.Position or unitRay.Origin
+    end
+    local function CalcSlope(vec)
+        local rel = Camera.CFrame:pointToObjectSpace(vec)
+        return Vector2.new(rel.x/-rel.z, rel.y/-rel.z)
+    end
+    local function Overlaps(cf, a1, a2)
+        local rel = Camera.CFrame:ToObjectSpace(cf)
+        local x, y = rel.x / -rel.z, rel.y / -rel.z
+
+        return (a1.x) < x and x < (a2.x) 
+            and (a1.y < y and y < a2.y) and rel.z < 0 
+    end
+    local function Swap(a1, a2)
+        return Vector2.new(math.min(a1.x, a2.x), math.min(a1.y, a2.y)), 
+            Vector2.new(math.max(a1.x, a2.x), math.max(a1.y, a2.y))
+    end
+    local function Search(objs, p1, p2)
+        local Found = {}
+        local a1 = CalcSlope(p1)
+        local a2 = CalcSlope(p2)
+        a1, a2 = Swap(a1, a2)
+        for _ ,obj in ipairs(objs) do
+            if obj.ClassName == "Part" or obj.Name == "Wedge" or obj.Name == "Sphere" or obj:IsA("MeshPart") or obj.ClassName == "VehicleSeat" or obj.ClassName == "Seat" and obj.Locked == false or obj.Name == "TrussPart" or obj.ClassName == "CornerWedgePart" then
+                local cf = obj:IsA("Model") and obj:GetBoundingBox() or obj.CFrame
+                if Overlaps(cf,a1, a2) then
+                    if obj:FindFirstChild("Selection") then
+                        obj.Selection.Visible = true
+                    else
+                        local Selection = Instance.new("SelectionBox")
+                        Selection.Visible = true
+                        Selection.Name = "Selection"
+                        Selection.Parent = obj
+                        Selection.Adornee = obj
+                        Selection.LineThickness = 0.02
+                    end
+                    table.insert(Found, obj)
+                end
+            end
+        end
+        return Found
+    end
+    UserInputService.InputBegan:Connect(function(input) 
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            if equip then
+                lastPos = Vector2.new(input.Position.x, input.Position.y) 
+                mouseDown = true
+            end
+
+        end
+    end)
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            if equip then
+                local pos = Vector2.new(input.Position.x, input.Position.y)
+                local result = Search(searchTable, HitPos(lastPos), HitPos(pos))
+                mouseDown = false; selectionFrame.Visible = false 
+            end
+        end
+    end)
+    RunService.Heartbeat:Connect(function() --// render selectionFrame gui
+        if equip then
+            if mouseDown then
+                local pos = UserInputService:GetMouseLocation()
+                local lastPos = lastPos + Inset
+                local Center = ((lastPos+ pos) * .5) - Inset 
+                local DistX = math.abs(lastPos.X - pos.X)  
+                local DistY = math.abs(lastPos.Y - pos.Y)  
+                selectionFrame.Position = UDim2.new(0, Center.X,0, Center.Y)
+                selectionFrame.Size =  UDim2.new(0, DistX,0, DistY)
+                selectionFrame.Visible = true 
+            end
+        end
+    end)
+end)
+tool.Unequipped:Connect(function()
+    TextButton.Visible = false
+    TextButton2.Visible = false
+    equip = false
+    connection:Disconnect()
+    connection2:Disconnect()
+    connection3:Disconnect()
+    clearselect()
+end)
+
+tool.Parent = plr.Backpack
