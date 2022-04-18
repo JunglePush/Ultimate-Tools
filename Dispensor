@@ -1,0 +1,122 @@
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local Root = Player.Character.HumanoidRootPart
+local ClientBridge = game:GetService("ReplicatedStorage").ClientBridge
+local Controller = ClientBridge.CloneControIler
+local increment
+
+local DragControlIer = ClientBridge.DragControlIer
+local serverSeeds = {}
+local clientSeeds = {}
+local increments = {Paint = "Color", Surface = "Surface", Material = "Material"}
+local hrp = Player.Character.HumanoidRootPart
+
+local function GetItem(Tool)
+    if Player.Backpack:FindFirstChild(Tool) then
+        Player.Backpack:FindFirstChild(Tool).Parent = Player.Character
+    else 
+        Player.Character:FindFirstChild(Tool).Parent = Player.Backpack
+    end
+end
+
+for _, func in pairs(getgc()) do
+    if type(func) == "function" and islclosure(func) then
+        local source = getfenv(func).script
+        local constants = getconstants(func)
+        local nextInt = table.find(constants, "NextInteger")
+        local seed = nextInt and constants[nextInt - 1]
+        if seed and typeof(seed) == "number" then
+            clientSeeds[source.Name] = seed
+        elseif source and source:IsDescendantOf(game) then
+            if increments[source.Name] then
+                increments[increments[source.Name]] = function()
+                    local increment = 0
+                    local index = 1
+                    for i, upvalue in pairs(getupvalues(func)) do
+                        if type(upvalue) == "number" then
+                            increment = upvalue
+                            index = i
+                        end
+                    end
+                    increment += 1
+                    setupvalue(func, index, increment)
+                    return increment
+                end
+            else
+                for _, upvalue in pairs(getupvalues(func)) do
+                    if typeof(upvalue) == "Random" then
+                        serverSeeds[source.Name] = upvalue
+                        break
+                    end
+                end
+            end
+        end
+    end
+end
+
+function getSeed(property)
+    return serverSeeds[property]:NextInteger(0, clientSeeds[property])
+end
+
+function copy(part, cFrame)
+    GetItem("Clone")
+    local success, key, part = DragControlIer:InvokeServer("GetKey", part, true)
+    if success then
+        DragControlIer.Update:FireServer("Update", key, cFrame)
+        DragControlIer.Update:FireServer("ClearKey", key)
+    end
+    GetItem("Clone")
+    return success and part
+end
+
+function edit(part, property, surfacee, ...)
+    GetItem("Brush")
+    if increments[property] ~= nil then
+        local increment = 0
+		if property == "Surface" then
+			newpropety = "SurfaceType"
+		else
+			newpropety = property
+		end
+        ClientBridge.ClassicController:FireServer("Lasso", Vector3.new())
+        ClientBridge.ClassicController:FireServer(property .. "Start", increment, {[newpropety] = ...})
+        ClientBridge.ClassicController:FireServer(property, increment, {Part = part, ["Surface"] = surfacee})
+        ClientBridge.ClassicController:FireServer(property .. "Stop", increment, {})
+        ClientBridge.ClassicController:FireServer("Lasso")
+    else
+        local arguments = {part}
+        for i, argument in pairs(table.pack(...)) do
+            if type(i) == "number" then
+                table.insert(arguments, argument)
+            end
+        end
+        if type(arguments[#arguments]) ~= "table" then
+            table.insert(arguments, {})
+        end
+        table.insert(arguments, getSeed(property))
+        ClientBridge:FindFirstChild((property == "CFrame" and "Move") or property):FireServer(unpack(arguments))
+    end
+    GetItem("Brush")
+end
+
+
+local sensor = copy(workspace.Map.Bricks.Wiring.Parts.Switch)
+
+edit(sensor, "Resize",nil, Vector3.new(2, 2, 2), Player.Character.Head.CFrame * CFrame.new(0, 2.5, 0))
+edit(sensor, "Surface","FrontSurface", Enum.SurfaceType.Hinge)
+edit(sensor, "Surface","BackSurface", Enum.SurfaceType.Motor)
+
+
+local params = RaycastParams.new()
+params.FilterDescendantsInstances = {sensor}
+while sensor and task.wait() do
+    local results = workspace:Raycast(sensor.Position, sensor.CFrame.LookVector * 2, params)
+    if results and results.Instance then
+		print(results.Instance.Name)
+		if results.Instance:IsA("BasePart") and sensor.BrickColor == BrickColor.new("Black") and results.Instance.Locked == false then
+			local part = copy(results.Instance)
+			edit(part, "Resize",nil, Vector3.new(results.Instance.Size.x,results.Instance.Size.y,results.Instance.Size.z), sensor.CFrame * CFrame.new(0, 0, 2))
+			edit(part, "Color",nil, Color3.new(results.Instance.Color.r, results.Instance.Color.g, results.Instance.Color.b))
+		end
+    end
+end
