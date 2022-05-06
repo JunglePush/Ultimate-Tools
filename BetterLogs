@@ -177,7 +177,6 @@ function load()
         tween = false
 
         if absolutepos.X >= 1750 and Open then
-            print("Closing")
             Frame:TweenPosition(UDim2.new(1, 0, 0, 5), nil,nil,0.4,true)
             tween = true
             wait(1)
