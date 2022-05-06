@@ -133,8 +133,8 @@ function load()
 
 
     Search:GetPropertyChangedSignal("Text"):connect(function()
+        ScrollingFrame.CanvasPosition = Vector2.new(0,0)
         while Search.Text ~= "" do
-            ScrollingFrame.CanvasPosition = Vector2.new(0,0)
             local Text = string.sub(string.lower(Search.Text), 1, string.len(Search.Text))
             local Split = Text:split(" ")
             local TextSplit = Split[2]
