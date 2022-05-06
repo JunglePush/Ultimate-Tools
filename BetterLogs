@@ -250,7 +250,7 @@
                 local TextSplit = Split[2]
 
                 for i,v in pairs(ScrollingFrame:GetChildren()) do
-                    if v:IsA("TextLabel") then
+                    if v:IsA("TextButton") then
                         if v.Text:lower():find(Text) then
                             v.Visible = true
                         else
@@ -262,7 +262,7 @@
             end
             if Search.Text == "" then
                 for i,v in pairs(ScrollingFrame:GetChildren()) do
-                    if v:IsA("TextLabel") then
+                    if v:IsA("TextButton") then
                         v.Visible = true
                     end
                 end
