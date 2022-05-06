@@ -1,221 +1,345 @@
-function load()
-    local LogService = game:GetService("LogService")
-    local Players = game:GetService("Players")
-    local Player = Players.LocalPlayer
+    function load()
+        local LogService = game:GetService("LogService")
+        local Players = game:GetService("Players")
+        local Player = Players.LocalPlayer
 
-    local StartNum = 999999999999
-    local LogNum = 0
+        local StartNum = 999999999999
+        local LogNum = 0
 
-    local ScreenGui = Instance.new("ScreenGui",game.Players.LocalPlayer.PlayerGui)
-    local Frame = Instance.new("Frame",ScreenGui)
-    local ScrollingFrame = Instance.new("ScrollingFrame",Frame)
-    local UIListLayout = Instance.new("UIListLayout",ScrollingFrame)
-    local Title = Instance.new("TextLabel",Frame)
-    local Search = Instance.new("TextBox",Frame)
-    local Pause = Instance.new("TextButton",Frame)
+        local ScreenGui = Instance.new("ScreenGui",game.Players.LocalPlayer.PlayerGui)
+        local Frame = Instance.new("Frame",ScreenGui)
+        local ScrollingFrame = Instance.new("ScrollingFrame",Frame)
+        local UIListLayout = Instance.new("UIListLayout",ScrollingFrame)
+        local Title = Instance.new("TextLabel",Frame)
+        local Search = Instance.new("TextBox",Frame)
+        local Pause = Instance.new("TextButton",Frame)
 
-    local OpenClose = Instance.new("TextButton",ScreenGui)
-    local Image = Instance.new("ImageLabel",OpenClose)
-    local UICorner = Instance.new("UICorner",OpenClose)
+        local InfoUI = Instance.new("Frame",Frame)
 
-    local tween = true
-    local tween2 = false
-    
-    local Open = true
-    local Paused = false
+        local Playerinfo = Instance.new("TextLabel",InfoUI)
+        local Timeinfo = Instance.new("TextLabel",InfoUI)
+        local Partinfo = Instance.new("TextLabel",InfoUI)
+        local PropertyInfo = Instance.new("TextLabel",InfoUI)
+        local InfoClose = Instance.new("TextButton",InfoUI)
 
-    local SaveCanvasPos
+        local OpenClose = Instance.new("TextButton",ScreenGui)
+        local Image = Instance.new("ImageLabel",OpenClose)
+        local UICorner = Instance.new("UICorner",OpenClose)
 
+        local tween = true
+        local tween2 = false
+        
+        local Open = true
+        local Paused = false
 
-    UICorner.CornerRadius = UDim.new(0,9)
-
-    Image.Image = "rbxassetid://3926305904"
-    Image.Size = UDim2.new(1,0,1,0)
-    Image.Position = UDim2.new(0,0,0,0)
-    Image.BackgroundTransparency = 1
-    Image.ImageTransparency = 0
-    Image.ScaleType = Enum.ScaleType.Stretch
-    Image.ImageRectSize = Vector2.new(36, 36)
-    Image.ImageRectOffset = Vector2.new(884, 804)
-    Image.ImageColor3 = Color3.fromRGB(255, 255, 255)
-    Image.SliceScale = 1
-
-    OpenClose.Size = UDim2.new(0, 30, 0, 30)
-    OpenClose.Position = UDim2.new(1, -137, 0, -32)
-    OpenClose.BackgroundTransparency = .5
-    OpenClose.BackgroundColor3 = Color3.fromRGB(0,0,0)
-    OpenClose.Text = ""
-
-    Frame.AnchorPoint = Vector2.new(1, 0)
-    Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Frame.BackgroundTransparency = 0.500
-    Frame.BorderSizePixel = 0
-    Frame.Position = UDim2.new(1, -310, 0, 5)
-    Frame.Size = UDim2.new(0, 300, 0, 350)
-
-    Search.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Search.BackgroundTransparency = 0.500
-    Search.BorderSizePixel = 0
-    Search.Position = UDim2.new(0.025, 0,0.023, 0)
-    Search.Size = UDim2.new(0, 82, 0, 18)
-    Search.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Search.Font = Enum.Font.GothamSemibold
-    Search.TextScaled = true
-    Search.Text = ""
-    Search.PlaceholderText = "Search"
-    Search.PlaceholderColor3 = Color3.fromRGB(125, 125, 125)
-
-    Pause.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Pause.BackgroundTransparency = 0.500
-    Pause.BorderSizePixel = 0
-    Pause.Position = UDim2.new(0.702, 0,0.023, 0)
-    Pause.Size = UDim2.new(0, 82, 0, 18)
-    Pause.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Pause.Font = Enum.Font.GothamSemibold
-    Pause.TextScaled = true
-    Pause.Text = "Pause"
-
-    ScrollingFrame.Active = true
-    ScrollingFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    ScrollingFrame.BackgroundTransparency = 1.000
-    ScrollingFrame.BorderSizePixel = 0
-    ScrollingFrame.Position = UDim2.new(0, 0, 0, 36)
-    ScrollingFrame.Size = UDim2.new(1, 0, 0.980000019, -30)
-    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 9999, 0)
-    ScrollingFrame.ScrollBarThickness = 0
-
-    UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    UIListLayout.SortOrder = Enum.SortOrder.Name
-    UIListLayout.Padding = UDim.new(0, 4)
-
-    Title.Name = "Title"
-    Title.Parent = Frame
-    Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Title.BackgroundTransparency = 1.010
-    Title.Size = UDim2.new(0, 300, 0, 26)
-    Title.Font = Enum.Font.GothamSemibold
-    Title.Position = UDim2.new(0, 0, 0.01, 0)
-    Title.Text = "Logs:"
-    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Title.TextSize = 14.000
+        local SaveCanvasPos
 
 
+        UICorner.CornerRadius = UDim.new(0,9)
 
+        Image.Image = "rbxassetid://3926305904"
+        Image.Size = UDim2.new(1,0,1,0)
+        Image.Position = UDim2.new(0,0,0,0)
+        Image.BackgroundTransparency = 1
+        Image.ImageTransparency = 0
+        Image.ScaleType = Enum.ScaleType.Stretch
+        Image.ImageRectSize = Vector2.new(36, 36)
+        Image.ImageRectOffset = Vector2.new(884, 804)
+        Image.ImageColor3 = Color3.fromRGB(255, 255, 255)
+        Image.SliceScale = 1
 
-    local function AddLog(msg)
-        local TextLabel = Instance.new("TextLabel",ScrollingFrame)
-        TextLabel.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        TextLabel.BackgroundTransparency = 0.500
-        TextLabel.BorderColor3 = Color3.fromRGB(27, 42, 53)
-        TextLabel.BorderSizePixel = 0
-        TextLabel.Position = UDim2.new(0.100000001, 0, 2.17164579e-05, 0)
-        TextLabel.Size = UDim2.new(0.949999988, 0, 0, 23)
-        TextLabel.Font = Enum.Font.GothamSemibold
-        TextLabel.Text = msg
-        TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TextLabel.TextScaled = true
-        TextLabel.TextSize = 14.000
-        TextLabel.TextWrapped = true
-        TextLabel.Name = tostring(StartNum)
-        StartNum = StartNum - 1
-        if msg:match("deleted") then
-            TextLabel.TextColor3 = Color3.fromRGB(255, 122, 0)
-        elseif msg:match("removing a wire") then
-            TextLabel.TextColor3 = Color3.fromRGB(255, 122, 0)
+        OpenClose.Size = UDim2.new(0, 30, 0, 30)
+        OpenClose.Position = UDim2.new(1, -137, 0, -32)
+        OpenClose.BackgroundTransparency = .5
+        OpenClose.BackgroundColor3 = Color3.fromRGB(0,0,0)
+        OpenClose.Text = ""
+
+        Frame.AnchorPoint = Vector2.new(1, 0)
+        Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        Frame.BackgroundTransparency = 0.500
+        Frame.BorderSizePixel = 0
+        Frame.Position = UDim2.new(1, -310,0, 5)
+        Frame.Size = UDim2.new(0, 300,0, 350)
+
+        InfoUI.AnchorPoint = Vector2.new(1, 0)
+        InfoUI.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        InfoUI.BackgroundTransparency = 0.500
+        InfoUI.BorderSizePixel = 0
+        InfoUI.Position = UDim2.new(1, -310, 0, 0)
+        InfoUI.Size = UDim2.new(0, 172,0, 118)
+        InfoUI.Visible = false
+
+        InfoClose.BackgroundTransparency = 1
+        InfoClose.Position = UDim2.new(-0.11, 0,-0.042, 0)
+        InfoClose.Size = UDim2.new(0, 18,0, 18)
+        InfoClose.Text = "X"
+        InfoClose.TextColor3 = Color3.fromRGB(255, 0, 0)
+        InfoClose.Font = Enum.Font.SourceSansBold
+        InfoClose.TextScaled = true
+
+        InfoClose.MouseButton1Click:Connect(function()
+            InfoUI.Visible = false
+        end)
+
+        Playerinfo.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        Playerinfo.BackgroundTransparency = 0.500
+        Playerinfo.BorderSizePixel = 0
+        Playerinfo.Position = UDim2.new(0.042, 0,0.036, 0)
+        Playerinfo.Size = UDim2.new(0.909, 0,0, 23)
+        Playerinfo.Font = Enum.Font.GothamSemibold
+        Playerinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Playerinfo.TextScaled = true
+
+        Timeinfo.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        Timeinfo.BackgroundTransparency = 0.500
+        Timeinfo.BorderSizePixel = 0
+        Timeinfo.Position = UDim2.new(0.042, 0,0.509, 0)
+        Timeinfo.Size = UDim2.new(0.909, 0,0, 23)
+        Timeinfo.Font = Enum.Font.GothamSemibold
+        Timeinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Timeinfo.TextScaled = true
+        
+        Partinfo.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        Partinfo.BackgroundTransparency = 0.500
+        Partinfo.BorderSizePixel = 0
+        Partinfo.Position = UDim2.new(0.042, 0,0.745, 0)
+        Partinfo.Size = UDim2.new(0.909, 0,0, 23)
+        Partinfo.Font = Enum.Font.GothamSemibold
+        Partinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Partinfo.TextScaled = true
+
+        PropertyInfo.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        PropertyInfo.BackgroundTransparency = 0.500
+        PropertyInfo.BorderSizePixel = 0
+        PropertyInfo.Position = UDim2.new(0.042, 0,0.272, 0)
+        PropertyInfo.Size = UDim2.new(0.909, 0,0, 23)
+        PropertyInfo.Font = Enum.Font.GothamSemibold
+        PropertyInfo.TextColor3 = Color3.fromRGB(255, 255, 255)
+        PropertyInfo.TextScaled = true
+        
+        Search.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        Search.BackgroundTransparency = 0.500
+        Search.BorderSizePixel = 0
+        Search.Position = UDim2.new(0.025, 0,0.023, 0)
+        Search.Size = UDim2.new(0, 82, 0, 18)
+        Search.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Search.Font = Enum.Font.GothamSemibold
+        Search.TextScaled = true
+        Search.Text = ""
+        Search.PlaceholderText = "Search"
+        Search.PlaceholderColor3 = Color3.fromRGB(125, 125, 125)
+
+        Pause.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        Pause.BackgroundTransparency = 0.500
+        Pause.BorderSizePixel = 0
+        Pause.Position = UDim2.new(0.702, 0,0.023, 0)
+        Pause.Size = UDim2.new(0, 82, 0, 18)
+        Pause.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Pause.Font = Enum.Font.GothamSemibold
+        Pause.TextScaled = true
+        Pause.Text = "Pause"
+
+        ScrollingFrame.Active = true
+        ScrollingFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        ScrollingFrame.BackgroundTransparency = 1.000
+        ScrollingFrame.BorderSizePixel = 0
+        ScrollingFrame.Position = UDim2.new(0, 0, 0, 36)
+        ScrollingFrame.Size = UDim2.new(1, 0, 0.980000019, -30)
+        ScrollingFrame.CanvasSize = UDim2.new(0, 0, 9999, 0)
+        ScrollingFrame.ScrollBarThickness = 0
+
+        UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+        UIListLayout.SortOrder = Enum.SortOrder.Name
+        UIListLayout.Padding = UDim.new(0, 4)
+
+        Title.Name = "Title"
+        Title.Parent = Frame
+        Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Title.BackgroundTransparency = 1.010
+        Title.Size = UDim2.new(0, 300, 0, 26)
+        Title.Font = Enum.Font.GothamSemibold
+        Title.Position = UDim2.new(0, 0, 0.01, 0)
+        Title.Text = "Logs:"
+        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Title.TextSize = 14.000
+
+        local function getTime()
+            local time = os.time()
+            local hour= math.floor(time / 3600) % 24
+            local minute = math.floor(time / 60) % 60
+            local second = time % 60
+            return hour, minute, second
         end
-        if Paused == true then
-            TextLabel.Visible = false
+
+        local function AddLog(msg)
+            local TextLabel = Instance.new("TextButton",ScrollingFrame)
+            local TimeDone = Instance.new("TextLabel",TextLabel)
+            TextLabel.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            TextLabel.BackgroundTransparency = 0.500
+            TextLabel.BorderColor3 = Color3.fromRGB(27, 42, 53)
+            TextLabel.BorderSizePixel = 0
+            TextLabel.Position = UDim2.new(0.100000001, 0, 2.17164579e-05, 0)
+            TextLabel.Size = UDim2.new(0.949999988, 0, 0, 23)
+            TextLabel.Font = Enum.Font.GothamSemibold
+            TextLabel.Text = msg
+            TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            TextLabel.TextScaled = true
+            TextLabel.TextSize = 14.000
+            TextLabel.TextWrapped = true
+            TextLabel.Name = tostring(StartNum)
+           
+            StartNum = StartNum - 1
+            if msg:match("deleted") then
+                TextLabel.TextColor3 = Color3.fromRGB(255, 122, 0)
+            elseif msg:match("removing a wire") then
+                TextLabel.TextColor3 = Color3.fromRGB(255, 122, 0)
+            end
+            if Paused == true then
+                TextLabel.Visible = false
+            end
+
+            local hour, minute, second = getTime()
+            local time = string.format("%02d:%02d:%02d", hour, minute, second)
+            TimeDone.Text = time
+            TimeDone.Visible = false
+
+            TextLabel.MouseButton1Click:Connect(function()
+                InfoUI.Visible = true
+                Playerinfo.Text = "Player: "..msg:match("%[(.+)%]")
+                Timeinfo.Text = "Time: "..TimeDone.Text
+                Partinfo.Text = "Part: Part"
+                if msg:match("deleted") then
+                    PropertyInfo.Text = "Property: Deleted"
+                elseif msg:match("removing a wire") then
+                    PropertyInfo.Text = "Property: Removed a wire"
+                elseif msg:match("resizing") then
+                    PropertyInfo.Text = "Property: Resized"
+                elseif msg:match("creating") then
+                    PropertyInfo.Text = "Property: Created"
+                elseif msg:match("dragging") then
+                    PropertyInfo.Text = "Property: Dragged"
+                elseif msg:match("moving") then
+                    PropertyInfo.Text = "Property: Moved"
+                elseif msg:match("locking") then
+                    PropertyInfo.Text = "Property: Locked"
+                elseif msg:match("unlocking") then
+                    PropertyInfo.Text = "Property: Unlocked"
+                else 
+                    PropertyInfo.Text = "Property: Unknown"
+                end
+
+            end)
         end
-    end
 
-    LogService.MessageOut:Connect(function(Message)
-        if Message:match("Replicating Wing") then return end
-        AddLog(Message)
-        LogNum = LogNum + 1
-        Title.Text = "Logs: "..LogNum
-    end)
+        LogService.MessageOut:Connect(function(Message)
+            if Message:match("Replicating Wing") then return end
+            AddLog(Message)
+            LogNum = LogNum + 1
+            Title.Text = "Logs: "..LogNum
+        end)
 
 
-    Search:GetPropertyChangedSignal("Text"):connect(function()
-        ScrollingFrame.CanvasPosition = Vector2.new(0,0)
-        while Search.Text ~= "" do
-            local Text = string.sub(string.lower(Search.Text), 1, string.len(Search.Text))
-            local Split = Text:split(" ")
-            local TextSplit = Split[2]
+        Search:GetPropertyChangedSignal("Text"):connect(function()
+            ScrollingFrame.CanvasPosition = Vector2.new(0,0)
+            while Search.Text ~= "" do
+                local Text = string.sub(string.lower(Search.Text), 1, string.len(Search.Text))
+                local Split = Text:split(" ")
+                local TextSplit = Split[2]
 
-            for i,v in pairs(ScrollingFrame:GetChildren()) do
-                if v:IsA("TextLabel") then
-                    if v.Text:lower():find(Text) then
+                for i,v in pairs(ScrollingFrame:GetChildren()) do
+                    if v:IsA("TextLabel") then
+                        if v.Text:lower():find(Text) then
+                            v.Visible = true
+                        else
+                            v.Visible = false
+                        end
+                    end
+                end
+                wait()
+            end
+            if Search.Text == "" then
+                for i,v in pairs(ScrollingFrame:GetChildren()) do
+                    if v:IsA("TextLabel") then
                         v.Visible = true
-                    else
-                        v.Visible = false
                     end
                 end
             end
-            wait()
-        end
-        if Search.Text == "" then
-            for i,v in pairs(ScrollingFrame:GetChildren()) do
-                if v:IsA("TextLabel") then
-                    v.Visible = true
+        end)
+
+        OpenClose.MouseButton1Click:Connect(function()
+            if Open then
+                Open = false
+                Frame:TweenPosition(UDim2.new(1, 310, 0, 5), nil,nil,0.25,true)
+            else
+                Open = true
+                Frame:TweenPosition(UDim2.new(1, -310, 0, 5), nil,nil,0.25,true)
+            end
+        end)
+
+
+        Player.PlayerGui.Leaderboard.MainFrame:GetPropertyChangedSignal("AbsolutePosition"):connect(function()
+            local absolutepos = Player.PlayerGui.Leaderboard.MainFrame.AbsolutePosition
+            if tween and Open then 
+                Frame:TweenPosition(UDim2.new(1, -310, 0, 5), nil,nil,0.2,true)
+            end
+            tween = false
+
+            if absolutepos.X >= 1750 and Open then
+                Frame:TweenPosition(UDim2.new(1, 0, 0, 5), nil,nil,0.4,true)
+                tween = true
+                wait(1)
+            end
+        end)
+
+        Pause.MouseButton1Click:Connect(function()
+            if Paused == false then
+                Paused = true
+                Pause.Text = "Resume"
+            else
+                Paused = false
+                Pause.Text = "Pause"
+                for i,v in pairs(ScrollingFrame:GetChildren()) do
+                    if v:IsA("TextLabel") then
+                        v.Visible = true
+                    end
                 end
             end
-        end
-    end)
+        end)
 
-    OpenClose.MouseButton1Click:Connect(function()
-        if Open then
-            Open = false
-            Frame:TweenPosition(UDim2.new(1, 310, 0, 5), nil,nil,0.25,true)
-        else
-            Open = true
-            Frame:TweenPosition(UDim2.new(1, -310, 0, 5), nil,nil,0.25,true)
-        end
-    end)
-
-
-    Player.PlayerGui.Leaderboard.MainFrame:GetPropertyChangedSignal("AbsolutePosition"):connect(function()
-        local absolutepos = Player.PlayerGui.Leaderboard.MainFrame.AbsolutePosition
-        if tween and Open then 
-            Frame:TweenPosition(UDim2.new(1, -310, 0, 5), nil,nil,0.2,true)
-        end
-        tween = false
-
-        if absolutepos.X >= 1750 and Open then
-            Frame:TweenPosition(UDim2.new(1, 0, 0, 5), nil,nil,0.4,true)
-            tween = true
-            wait(1)
-        end
-    end)
-
-    Pause.MouseButton1Click:Connect(function()
-        if Paused == false then
-            Paused = true
-            Pause.Text = "Resume"
-        else
-            Paused = false
-            Pause.Text = "Pause"
-            for i,v in pairs(ScrollingFrame:GetChildren()) do
-                if v:IsA("TextLabel") then
-                    v.Visible = true
-                end
+        workspace.ChildAdded:Connect(function(child)
+            if child:IsA("BasePart") then
+            AddLog(child.Name .. " was copied.")
+            LogNum = LogNum + 1
+            Title.Text = "Logs: "..LogNum
             end
+        end)
+
+        for i,v in pairs(Players:GetChildren()) do
+            v.Character.HumanoidRootPart:GetPropertyChangedSignal("Anchored"):connect(function()
+                if v.Character.HumanoidRootPart.Anchored == true then
+                    AddLog(v.Name .. " is frozen.")
+                else
+                    AddLog(v.Name .. " is unfrozen.")
+                end
+            end)
         end
-    end)
 
-    workspace.ChildAdded:Connect(function(child)
-        if child:IsA("BasePart") then
-          AddLog(child.Name .. " was copied.")
-          LogNum = LogNum + 1
-          Title.Text = "Logs: "..LogNum
-        end
-    end)
+        Players.PlayerAdded:Connect(function(player)
+            wait(5.5)
+            player.Character.HumanoidRootPart:GetPropertyChangedSignal("Anchored"):connect(function()
+                if player.Character.HumanoidRootPart.Anchored == true then
+                    AddLog(v.Name .. " is frozen.")
+                else
+                    AddLog(v.Name .. " is unfrozen.")
+                end
+            end)
+        end)
 
-end
+    end
 
-if game.PlaceId == 6982988368 then
-    repeat wait() until game:IsLoaded()
-    wait(1)
-    load()
-end
+    if game.PlaceId == 6982988368 then
+      repeat wait() until game:IsLoaded()
+        wait(1)
+        load()
+    end
 
