@@ -127,6 +127,7 @@ function load()
     end
 
     LogService.MessageOut:Connect(function(Message)
+        if Message:match("Replicating Wing") then return end
         AddLog(Message)
     end)
 
@@ -195,6 +196,12 @@ function load()
                     v.Visible = true
                 end
             end
+        end
+    end)
+
+    workspace.ChildAdded:Connect(function(child)
+        if child:IsA("BasePart") then
+          AddLog(child.Name .. " was copied.")
         end
     end)
 
