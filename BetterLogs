@@ -6,7 +6,7 @@
         local StartNum = 999999999999
         local LogNum = 0
 
-        local ScreenGui = Instance.new("ScreenGui",game.Players.LocalPlayer.PlayerGui)
+        local ScreenGui = Instance.new("ScreenGui",game.CoreGui)
         local Frame = Instance.new("Frame",ScreenGui)
         local ScrollingFrame = Instance.new("ScrollingFrame",Frame)
         local UIListLayout = Instance.new("UIListLayout",ScrollingFrame)
@@ -26,6 +26,8 @@
         local Image = Instance.new("ImageLabel",OpenClose)
         local UICorner = Instance.new("UICorner",OpenClose)
 
+        local BindableEvent = Instance.new("BindableEvent")
+
         local tween = true
         local tween2 = false
         
@@ -33,6 +35,7 @@
         local Paused = false
 
         local SaveCanvasPos
+        local Con = game.Players.LocalPlayer.leaderstats.Copies:GetPropertyChangedSignal("Value"):Connect(function() end)
 
 
         UICorner.CornerRadius = UDim.new(0,9)
@@ -183,8 +186,8 @@
             TextLabel.Font = Enum.Font.GothamSemibold
             TextLabel.Text = msg
             TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            TextLabel.TextScaled = true
-            TextLabel.TextSize = 14.000
+            TextLabel.TextScaled = false
+            TextLabel.TextSize = 10
             TextLabel.TextWrapped = true
             TextLabel.Name = tostring(StartNum)
            
@@ -306,13 +309,36 @@
             end
         end)
 
-        workspace.ChildAdded:Connect(function(child)
-            if child:IsA("BasePart") then
-            AddLog(child.Name .. " was copied.")
-            LogNum = LogNum + 1
-            Title.Text = "Logs: "..LogNum
-            end
+
+
+        local function leaderstat(Player)
+            local Leaderstats = Player:WaitForChild('leaderstats')
+            Leaderstats:WaitForChild('Copies'):GetPropertyChangedSignal('Value'):Connect(function() BindableEvent:Fire(Player) end)
+        end
+
+
+        for i,v in pairs(Players:GetPlayers()) do
+            leaderstat(v)
+        end
+
+        local LastPlayer
+        BindableEvent.Event:Connect(function(PlayerPassed) 
+            LastPlayer = tostring(PlayerPassed)
         end)
+       
+        
+        workspace.ChildAdded:Connect(function(child)
+            Con:Disconnect()
+            local Players = game:GetService("Players")
+            local part
+            if child:IsA("BasePart") then
+                part = child.Name
+                AddLog(LastPlayer.." copied a "..part)
+            end
+
+
+        end)
+
 
         for i,v in pairs(Players:GetChildren()) do
             v.Character.HumanoidRootPart:GetPropertyChangedSignal("Anchored"):connect(function()
@@ -338,7 +364,7 @@
     end
 
     if game.PlaceId == 6982988368 then
-      repeat wait() until game:IsLoaded()
+        repeat wait() until game:IsLoaded()
         wait(1)
         load()
     end
