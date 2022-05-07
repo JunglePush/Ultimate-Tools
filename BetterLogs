@@ -25,15 +25,19 @@
         local OpenClose = Instance.new("TextButton",ScreenGui)
         local Image = Instance.new("ImageLabel",OpenClose)
         local UICorner = Instance.new("UICorner",OpenClose)
-
+       
         local BindableEvent = Instance.new("BindableEvent")
         local BindableEvent2 = Instance.new("BindableEvent")
+        local BindableEvent3 = Instance.new("BindableEvent")
 
         local tween = true
         local tween2 = false
         
         local Open = true
         local Paused = false
+
+        local LastMessage
+
 
         local SaveCanvasPos
         local Con = game.Players.LocalPlayer.leaderstats.Copies:GetPropertyChangedSignal("Value"):Connect(function() end)
@@ -237,6 +241,7 @@
 
         LogService.MessageOut:Connect(function(Message)
             if Message:match("Replicating Wing") then return end
+            local LastMessage = Message
             AddLog(Message)
             LogNum = LogNum + 1
             Title.Text = "Logs: "..LogNum
@@ -320,6 +325,9 @@
                 if Leaderstats:WaitForChild('Deletes').Value < PlaceHolderValue then
                     BindableEvent2:Fire(Player)
                 end
+                if Leaderstats:WaitForChild('Deletes').Value > PlaceHolderValue then
+                    BindableEvent3:Fire()
+                end
                 PlaceHolderValue = Leaderstats:WaitForChild('Deletes').Value                
             end)
         end
@@ -331,34 +339,51 @@
 
         local Childaddedstop = false
         
-        local LastPlayer
+        local LastPlayer = nil
         BindableEvent.Event:Connect(function(PlayerPassed) 
             LastPlayer = tostring(PlayerPassed)
             Childaddedstop = false
         end)
 
-        local LastPlayer2
+        local LastPlayer2 = nil
         BindableEvent2.Event:Connect(function(PlayerPassed) 
             LastPlayer2 = tostring(PlayerPassed)
             AddLog("["..LastPlayer2.."]".." undid a part")
             LogNum = LogNum + 1
             Title.Text = "Logs: "..LogNum
         end)
-
         
+        local bool = false
+        BindableEvent3.Event:Connect(function() 
+            bool = true
+            wait(4)
+            bool = false
+        end)
+
+        workspace.ChildRemoved:Connect(function(Child)
+            wait(.025)
+            if Child:IsA("BasePart") and bool == false then
+               AddLog("[F3X/Server]".." deleted a part")
+            end
+        end)
 
 
-        
         workspace.ChildAdded:Connect(function(child)
             Con:Disconnect()
             wait(.025)
             if child:IsA("BasePart") and Childaddedstop == false then
                 local part = child.Name
-                AddLog("["..LastPlayer.."]".." copied a "..part)
+                if LastPlayer ~= nil then
+                    AddLog("["..LastPlayer.."]".." copied a "..part)
+                else
+                    AddLog("[F3X]".." copied a "..part)
+                end
                 LogNum = LogNum + 1
                 Title.Text = "Logs: "..LogNum
+                LastPlayer = nil
             end
         end)
+
 
                 
         LogService.MessageOut:Connect(function(Message)
@@ -398,7 +423,7 @@
     end
 
     if game.PlaceId == 6982988368 then
-      repeat wait() until game:IsLoaded()
+        repeat wait() until game:IsLoaded()
         wait(1)
         load()
     end
