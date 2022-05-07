@@ -27,6 +27,7 @@
         local UICorner = Instance.new("UICorner",OpenClose)
 
         local BindableEvent = Instance.new("BindableEvent")
+        local BindableEvent2 = Instance.new("BindableEvent")
 
         local tween = true
         local tween2 = false
@@ -272,10 +273,10 @@
         OpenClose.MouseButton1Click:Connect(function()
             if Open then
                 Open = false
-                Frame:TweenPosition(UDim2.new(1, 310, 0, 5), nil,nil,0.25,true)
+                Frame:TweenPosition(UDim2.new(1, 310, 0, 5), nil,Enum.EasingStyle.Sine,0.25,true)
             else
                 Open = true
-                Frame:TweenPosition(UDim2.new(1, -310, 0, 5), nil,nil,0.25,true)
+                Frame:TweenPosition(UDim2.new(1, -310, 0, 5), nil,Enum.EasingStyle.Sine,0.25,true)
             end
         end)
 
@@ -283,12 +284,12 @@
         Player.PlayerGui.Leaderboard.MainFrame:GetPropertyChangedSignal("AbsolutePosition"):connect(function()
             local absolutepos = Player.PlayerGui.Leaderboard.MainFrame.AbsolutePosition
             if tween and Open then 
-                Frame:TweenPosition(UDim2.new(1, -310, 0, 5), nil,nil,0.2,true)
+                Frame:TweenPosition(UDim2.new(1, -310, 0, 5), nil,Enum.EasingStyle.Sine,0.2,true)
             end
             tween = false
 
             if absolutepos.X >= 1750 and Open then
-                Frame:TweenPosition(UDim2.new(1, 0, 0, 5), nil,nil,0.4,true)
+                Frame:TweenPosition(UDim2.new(1, 0, 0, 5), nil,Enum.EasingStyle.Sine,0.4,true)
                 tween = true
                 wait(1)
             end
@@ -313,7 +314,14 @@
 
         local function leaderstat(Player)
             local Leaderstats = Player:WaitForChild('leaderstats')
+            local PlaceHolderValue = Leaderstats:WaitForChild('Deletes').Value
             Leaderstats:WaitForChild('Copies'):GetPropertyChangedSignal('Value'):Connect(function() BindableEvent:Fire(Player) end)
+            Leaderstats:WaitForChild('Deletes'):GetPropertyChangedSignal('Value'):Connect(function()
+                if Leaderstats:WaitForChild('Deletes').Value < PlaceHolderValue then
+                    BindableEvent2:Fire(Player)
+                end
+                PlaceHolderValue = Leaderstats:WaitForChild('Deletes').Value                
+            end)
         end
 
 
@@ -321,31 +329,53 @@
             leaderstat(v)
         end
 
+        local Childaddedstop = false
+        
         local LastPlayer
         BindableEvent.Event:Connect(function(PlayerPassed) 
             LastPlayer = tostring(PlayerPassed)
+            Childaddedstop = false
         end)
-       
+
+        local LastPlayer2
+        BindableEvent2.Event:Connect(function(PlayerPassed) 
+            LastPlayer2 = tostring(PlayerPassed)
+            AddLog("["..LastPlayer2.."]".." undid a part")
+            LogNum = LogNum + 1
+            Title.Text = "Logs: "..LogNum
+        end)
+
+        
+
+
         
         workspace.ChildAdded:Connect(function(child)
             Con:Disconnect()
-            local Players = game:GetService("Players")
-            local part
-            if child:IsA("BasePart") then
-                part = child.Name
-                AddLog(LastPlayer.." copied a "..part)
+            wait(.025)
+            if child:IsA("BasePart") and Childaddedstop == false then
+                local part = child.Name
+                AddLog("["..LastPlayer.."]".." copied a "..part)
+                LogNum = LogNum + 1
+                Title.Text = "Logs: "..LogNum
             end
-
-
         end)
 
+                
+        LogService.MessageOut:Connect(function(Message)
+            if Message:match("deleted") then Childaddedstop = true else Childaddedstop = false end
+        end)
+       
 
         for i,v in pairs(Players:GetChildren()) do
             v.Character.HumanoidRootPart:GetPropertyChangedSignal("Anchored"):connect(function()
                 if v.Character.HumanoidRootPart.Anchored == true then
                     AddLog(v.Name .. " is frozen.")
+                    LogNum = LogNum + 1
+                    Title.Text = "Logs: "..LogNum
                 else
                     AddLog(v.Name .. " is unfrozen.")
+                    LogNum = LogNum + 1
+                    Title.Text = "Logs: "..LogNum
                 end
             end)
         end
@@ -355,8 +385,12 @@
             player.Character.HumanoidRootPart:GetPropertyChangedSignal("Anchored"):connect(function()
                 if player.Character.HumanoidRootPart.Anchored == true then
                     AddLog(v.Name .. " is frozen.")
+                    LogNum = LogNum + 1
+                    Title.Text = "Logs: "..LogNum
                 else
                     AddLog(v.Name .. " is unfrozen.")
+                    LogNum = LogNum + 1
+                    Title.Text = "Logs: "..LogNum
                 end
             end)
         end)
@@ -364,7 +398,7 @@
     end
 
     if game.PlaceId == 6982988368 then
-        repeat wait() until game:IsLoaded()
+      repeat wait() until game:IsLoaded()
         wait(1)
         load()
     end
