@@ -32,6 +32,8 @@
 
         local tween = true
         local tween2 = false
+
+        local Searching = false
         
         local Open = true
         local Paused = false
@@ -179,6 +181,18 @@
             return hour, minute, second
         end
 
+        local function GetVisible()
+            local Searchloggings = 0
+            for i,v in pairs(ScrollingFrame:GetChildren()) do
+                if v:IsA("TextButton") then
+                    if v.Visible then
+                        Searchloggings += 1
+                    end
+                end
+            end
+            Title.Text = "Logs: "..Searchloggings
+        end
+
         local function AddLog(msg)
             local TextLabel = Instance.new("TextButton",ScrollingFrame)
             local TimeDone = Instance.new("TextLabel",TextLabel)
@@ -244,13 +258,17 @@
             local LastMessage = Message
             AddLog(Message)
             LogNum = LogNum + 1
-            Title.Text = "Logs: "..LogNum
+            if Searching == false then
+                Title.Text = "Logs: "..LogNum
+            end
         end)
 
 
         Search:GetPropertyChangedSignal("Text"):connect(function()
             ScrollingFrame.CanvasPosition = Vector2.new(0,0)
             while Search.Text ~= "" do
+                GetVisible()
+                Searching = true
                 local Text = string.sub(string.lower(Search.Text), 1, string.len(Search.Text))
                 local Split = Text:split(" ")
                 local TextSplit = Split[2]
@@ -267,6 +285,8 @@
                 wait()
             end
             if Search.Text == "" then
+                Searching = false
+                Title.Text = "Logs: "..LogNum
                 for i,v in pairs(ScrollingFrame:GetChildren()) do
                     if v:IsA("TextButton") then
                         v.Visible = true
@@ -350,7 +370,9 @@
             LastPlayer2 = tostring(PlayerPassed)
             AddLog("["..LastPlayer2.."]".." undid a part")
             LogNum = LogNum + 1
-            Title.Text = "Logs: "..LogNum
+            if Searching == false then
+                Title.Text = "Logs: "..LogNum
+            end
         end)
         
         local bool = false
@@ -375,11 +397,11 @@
                 local part = child.Name
                 if LastPlayer ~= nil then
                     AddLog("["..LastPlayer.."]".." copied a "..part)
-                else
-                    AddLog("[F3X]".." copied a "..part)
                 end
                 LogNum = LogNum + 1
-                Title.Text = "Logs: "..LogNum
+                if Searching == false then
+                    Title.Text = "Logs: "..LogNum
+                end
                 LastPlayer = nil
             end
         end)
@@ -396,11 +418,15 @@
                 if v.Character.HumanoidRootPart.Anchored == true then
                     AddLog(v.Name .. " is frozen.")
                     LogNum = LogNum + 1
-                    Title.Text = "Logs: "..LogNum
+                    if Searching == false then
+                        Title.Text = "Logs: "..LogNum
+                    end
                 else
                     AddLog(v.Name .. " is unfrozen.")
                     LogNum = LogNum + 1
-                    Title.Text = "Logs: "..LogNum
+                    if Searching == false then
+                        Title.Text = "Logs: "..LogNum
+                    end
                 end
             end)
         end
@@ -411,11 +437,15 @@
                 if player.Character.HumanoidRootPart.Anchored == true then
                     AddLog(v.Name .. " is frozen.")
                     LogNum = LogNum + 1
-                    Title.Text = "Logs: "..LogNum
+                    if Searching == false then
+                        Title.Text = "Logs: "..LogNum
+                    end
                 else
                     AddLog(v.Name .. " is unfrozen.")
                     LogNum = LogNum + 1
-                    Title.Text = "Logs: "..LogNum
+                    if Searching == false then
+                        Title.Text = "Logs: "..LogNum
+                    end
                 end
             end)
         end)
@@ -423,7 +453,7 @@
     end
 
     if game.PlaceId == 6982988368 then
-        repeat wait() until game:IsLoaded()
+     repeat wait() until game:IsLoaded()
         wait(1)
         load()
     end
