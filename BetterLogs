@@ -143,8 +143,8 @@ function load()
     Pause.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     Pause.BackgroundTransparency = 0.500
     Pause.BorderSizePixel = 0
-    Pause.Position = UDim2.new(0.702, 0,0.023, 0)
-    Pause.Size = UDim2.new(0, 82, 0, 18)
+    Pause.Position = UDim2.new(0.768, 0,0.023, 0)
+    Pause.Size = UDim2.new(0, 62, 0, 18)
     Pause.TextColor3 = Color3.fromRGB(255, 255, 255)
     Pause.Font = Enum.Font.GothamSemibold
     Pause.TextScaled = true
@@ -153,7 +153,7 @@ function load()
     Clear.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     Clear.BackgroundTransparency = 0.500
     Clear.BorderSizePixel = 0
-    Clear.Position = UDim2.new(0.312, 0,0.023, 0)
+    Clear.Position = UDim2.new(0.661, 0,0.023, 0)
     Clear.Size = UDim2.new(0, 30, 0, 18)
     Clear.TextColor3 = Color3.fromRGB(255, 255, 255)
     Clear.Font = Enum.Font.GothamSemibold
@@ -207,6 +207,7 @@ function load()
     end
 
     local function AddLog(msg)
+        LogNum = LogNum + 1
         local TextLabel = Instance.new("TextButton",ScrollingFrame)
         local TimeDone = Instance.new("TextLabel",TextLabel)
         TextLabel.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
@@ -222,14 +223,15 @@ function load()
         TextLabel.TextSize = 10
         TextLabel.TextWrapped = true
         TextLabel.Name = tostring(StartNum)
-       
         StartNum = StartNum - 1
+
         if msg:match("deleted") then
             TextLabel.TextColor3 = Color3.fromRGB(255, 122, 0)
         elseif msg:match("removing a wire") then
             TextLabel.TextColor3 = Color3.fromRGB(255, 122, 0)
         end
-        if Paused == true then
+
+        if Paused or Searching then
             TextLabel.Visible = false
         end
 
@@ -270,8 +272,8 @@ function load()
         if Message:match("Replicating Wing") then return end
         local LastMessage = Message
         AddLog(Message)
-        LogNum = LogNum + 1
-        if Searching == false then
+        
+        if not Searching then
             Title.Text = "Logs: "..LogNum
         end
     end)
@@ -318,6 +320,11 @@ function load()
         end
     end)
 
+    Player.PlayerGui.Leaderboard.ChildAdded:Connect(function(child)
+        if child.Name == "Frame" then
+            child:TweenPosition(UDim2.new(1, -620, 0, 41), nil,Enum.EasingStyle.Sine,0.25,true)
+        end
+    end)
 
     Player.PlayerGui.Leaderboard.MainFrame:GetPropertyChangedSignal("AbsolutePosition"):connect(function()
         local absolutepos = Player.PlayerGui.Leaderboard.MainFrame.AbsolutePosition
@@ -341,7 +348,7 @@ function load()
             Paused = false
             Pause.Text = "Pause"
             for i,v in pairs(ScrollingFrame:GetChildren()) do
-                if v:IsA("TextLabel") then
+                if v:IsA("TextButton") then
                     v.Visible = true
                 end
             end
@@ -357,7 +364,7 @@ function load()
         LogNum = 0
         StartNum = 999999999999
         Title.Text = "Logs: 0"
-end)
+    end)
 
 
     local function leaderstat(Player)
@@ -392,7 +399,7 @@ end)
     BindableEvent2.Event:Connect(function(PlayerPassed) 
         LastPlayer2 = tostring(PlayerPassed)
         AddLog("["..LastPlayer2.."]".." undid a part")
-        LogNum = LogNum + 1
+        
         if Searching == false then
             Title.Text = "Logs: "..LogNum
         end
@@ -408,7 +415,8 @@ end)
     workspace.ChildRemoved:Connect(function(Child)
         wait(.025)
         if Child:IsA("BasePart") and bool == false then
-           AddLog("[F3X/Server]".." deleted a part")
+           AddLog("[F3X/Server]".." deleted a "..Child.Name)
+           
         end
     end)
 
@@ -421,7 +429,7 @@ end)
             if LastPlayer ~= nil then
                 AddLog("["..LastPlayer.."]".." copied a "..part)
             end
-            LogNum = LogNum + 1
+            
             if Searching == false then
                 Title.Text = "Logs: "..LogNum
             end
@@ -440,13 +448,13 @@ end)
         v.Character.HumanoidRootPart:GetPropertyChangedSignal("Anchored"):connect(function()
             if v.Character.HumanoidRootPart.Anchored == true then
                 AddLog(v.Name .. " is frozen.")
-                LogNum = LogNum + 1
+                
                 if Searching == false then
                     Title.Text = "Logs: "..LogNum
                 end
             else
                 AddLog(v.Name .. " is unfrozen.")
-                LogNum = LogNum + 1
+                
                 if Searching == false then
                     Title.Text = "Logs: "..LogNum
                 end
@@ -459,13 +467,13 @@ end)
         player.Character.HumanoidRootPart:GetPropertyChangedSignal("Anchored"):connect(function()
             if player.Character.HumanoidRootPart.Anchored == true then
                 AddLog(v.Name .. " is frozen.")
-                LogNum = LogNum + 1
+                
                 if Searching == false then
                     Title.Text = "Logs: "..LogNum
                 end
             else
                 AddLog(v.Name .. " is unfrozen.")
-                LogNum = LogNum + 1
+                
                 if Searching == false then
                     Title.Text = "Logs: "..LogNum
                 end
