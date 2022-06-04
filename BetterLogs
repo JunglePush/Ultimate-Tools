@@ -416,8 +416,10 @@ function load()
 
     game.Players.PlayerRemoving:Connect(function(Player)
         for i, v in pairs(BlackList:GetChildren()) do
-            if v.Player.Text == Player.Name then
-                v:Destroy()
+            if v:IsA("Frame") then
+                if v.Player.Text == Player.Name then
+                    v:Destroy()
+                end
             end
         end
     end)
