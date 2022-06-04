@@ -1,13 +1,15 @@
 function load()
     local LogService = game:GetService("LogService")
     local Players = game:GetService("Players")
-    local Player = Players.LocalPlayer
+    local LocalPlayer = Players.LocalPlayer
 
     local StartNum = 999999999999
     local LogNum = 0
+    local BlacklistedPlayers = {}
 
     local ScreenGui = Instance.new("ScreenGui",game.CoreGui)
-    local Frame = Instance.new("Frame",ScreenGui)
+    local Frame = Instance.new("Frame",ScreenGui) 
+    local Settings = Instance.new("ImageButton",Frame)
     local ScrollingFrame = Instance.new("ScrollingFrame",Frame)
     local UIListLayout = Instance.new("UIListLayout",ScrollingFrame)
     local Title = Instance.new("TextLabel",Frame)
@@ -16,6 +18,23 @@ function load()
     local Clear = Instance.new("TextButton",Frame)
 
     local InfoUI = Instance.new("Frame",Frame)
+
+    local SettingsFrame = Instance.new("Frame",ScreenGui)
+    local SettingsTitle = Instance.new("TextLabel",SettingsFrame)
+    local Close = Instance.new("TextButton",SettingsTitle)
+    local BlackList = Instance.new("Frame",SettingsFrame)
+    local UIListLayout2 = Instance.new("UIListLayout",BlackList)
+    local BlacklistTItle = Instance.new("TextLabel",SettingsFrame)
+    local PlayerBlock = Instance.new("Frame",BlacklistTItle)
+    local Player = Instance.new("TextLabel",PlayerBlock)
+    local TickBox = Instance.new("ImageButton",PlayerBlock)
+
+    local NormalSettings = Instance.new("Frame",SettingsFrame)
+    local UIListLayout3 = Instance.new("UIListLayout",NormalSettings)
+    local Rainbow = Instance.new("Frame",NormalSettings)
+    local Setting = Instance.new("TextLabel",Rainbow)
+    local TixBox = Instance.new("ImageButton",Rainbow)
+    local NormalTitle = Instance.new("TextLabel",SettingsFrame)
 
     local Playerinfo = Instance.new("TextLabel",InfoUI)
     local Timeinfo = Instance.new("TextLabel",InfoUI)
@@ -38,6 +57,7 @@ function load()
     
     local Open = true
     local Paused = false
+    local RainbowText = false
 
     local LastMessage
 
@@ -71,6 +91,14 @@ function load()
     Frame.BorderSizePixel = 0
     Frame.Position = UDim2.new(1, -310,0, 5)
     Frame.Size = UDim2.new(0, 300,0, 350)
+
+    Settings.Name = "settings"
+    Settings.BackgroundTransparency = 1.000
+    Settings.Position = UDim2.new(0.305, 0,0.023, 0)
+    Settings.Size = UDim2.new(0, 18, 0, 18)
+    Settings.Image = "rbxassetid://3926307971"
+    Settings.ImageRectOffset = Vector2.new(324, 124)
+    Settings.ImageRectSize = Vector2.new(36, 36)
 
     InfoUI.AnchorPoint = Vector2.new(1, 0)
     InfoUI.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -186,6 +214,218 @@ function load()
     Title.TextColor3 = Color3.fromRGB(255, 255, 255)
     Title.TextSize = 14.000
 
+    SettingsFrame.Name = "SettingsFrame"
+    SettingsFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    SettingsFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    SettingsFrame.BackgroundTransparency = 0.500
+    SettingsFrame.BorderSizePixel = 0
+    SettingsFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    SettingsFrame.Visible = false
+    SettingsFrame.Size = UDim2.new(0.301400155, 0, 0.389090896, 0)
+
+    SettingsTitle.Name = "SettingsTitle"
+    SettingsTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    SettingsTitle.BackgroundTransparency = 1.000
+    SettingsTitle.Position = UDim2.new(0.0219999999, 0, 0.00999999978, 0)
+    SettingsTitle.Size = UDim2.new(0.850855768, 0, 0.0560747646, 0)
+    SettingsTitle.Font = Enum.Font.SourceSansBold
+    SettingsTitle.Text = "Settings"
+    SettingsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SettingsTitle.TextScaled = true
+    SettingsTitle.TextSize = 14.000
+    SettingsTitle.TextWrapped = true
+    SettingsTitle.TextXAlignment = Enum.TextXAlignment.Left
+    SettingsTitle.TextYAlignment = Enum.TextYAlignment.Top
+
+    Close.Name = "Close"
+    Close.BackgroundColor3 = Color3.fromRGB(199, 50, 50)
+    Close.BackgroundTransparency = 1.000
+    Close.Position = UDim2.new(1.090, 0, 0, 0)
+    Close.Size = UDim2.new(0.078, 0,1, 0)
+    Close.Font = Enum.Font.SourceSansBold
+    Close.Text = "X"
+    Close.TextColor3 = Color3.fromRGB(221, 49, 49)
+    Close.TextScaled = true
+    Close.TextSize = 14.000
+    Close.TextWrapped = true
+
+    BlackList.Name = "BlackList"
+    BlackList.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    BlackList.BackgroundTransparency = 1.000
+    BlackList.Position = UDim2.new(0.0220048893, 0, 0.152647972, 0)
+    BlackList.Size = UDim2.new(0.422982872, 0, 0.816199362, 0)
+
+    UIListLayout2.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout2.Padding = UDim.new(0, 5)
+
+    BlacklistTItle.Name = "BlacklistTItle"
+    BlacklistTItle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    BlacklistTItle.BackgroundTransparency = 1.000
+    BlacklistTItle.Position = UDim2.new(0.0220048893, 0, 0.0941121206, 0)
+    BlacklistTItle.Size = UDim2.new(0.420537889, 0, 0.0560747646, 0)
+    BlacklistTItle.Font = Enum.Font.SourceSans
+    BlacklistTItle.Text = "Blacklist"
+    BlacklistTItle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    BlacklistTItle.TextScaled = true
+    BlacklistTItle.TextSize = 14.000
+    BlacklistTItle.TextWrapped = true
+    BlacklistTItle.TextXAlignment = Enum.TextXAlignment.Left
+    BlacklistTItle.TextYAlignment = Enum.TextYAlignment.Top
+
+    PlayerBlock.Name = "PlayerBlock"
+    PlayerBlock.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    PlayerBlock.BackgroundTransparency = 0.500
+    PlayerBlock.BorderSizePixel = 0
+    PlayerBlock.Position = UDim2.new(0, 0, 1.61111116, 0)
+    PlayerBlock.Size = UDim2.new(1, 0, 0.0700000003, 0)
+    PlayerBlock.Visible = false
+
+    Player.Name = "Player"
+    Player.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Player.BackgroundTransparency = 1.000
+    Player.Position = UDim2.new(0.0346820801, 0, 0, 0)
+    Player.Size = UDim2.new(0.78612715, 0, 1, 0)
+    Player.Font = Enum.Font.SourceSans
+    Player.Text = "Bereghost_1kingepicv"
+    Player.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Player.TextSize = 13.000
+    Player.TextWrapped = true
+    Player.TextXAlignment = Enum.TextXAlignment.Left
+
+    TickBox.Name = "TickBox"
+    TickBox.AnchorPoint = Vector2.new(0.5, 0.5)
+    TickBox.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
+    TickBox.BackgroundTransparency = 0.500
+    TickBox.BorderSizePixel = 0
+    TickBox.LayoutOrder = 2
+    TickBox.Position = UDim2.new(0.949999988, 0, 0.469999999, 0)
+    TickBox.Size = UDim2.new(0.0982658938, 0, 0.926935673, 0)
+    TickBox.ZIndex = 2
+    TickBox.ImageRectOffset = Vector2.new(312, 4)
+    TickBox.ImageRectSize = Vector2.new(24, 24)
+
+-- normal settings
+
+    NormalSettings.Name = "NormalSettings"
+    NormalSettings.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    NormalSettings.BackgroundTransparency = 1.000
+    NormalSettings.Position = UDim2.new(0.559902191, 0, 0.152647972, 0)
+    NormalSettings.Size = UDim2.new(0.422982872, 0, 0.816199362, 0)
+
+    UIListLayout3.Name = "UIListLayout3"
+    UIListLayout3.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout3.Padding = UDim.new(0, 5)
+
+    Rainbow.Name = "Rainbow"
+    Rainbow.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    Rainbow.BackgroundTransparency = 0.500
+    Rainbow.BorderSizePixel = 0
+    Rainbow.Position = UDim2.new(0, 0, 1.61111116, 0)
+    Rainbow.Size = UDim2.new(1, 0, 0.0700000003, 0)
+
+    Setting.Name = "Setting"
+    Setting.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Setting.BackgroundTransparency = 1.000
+    Setting.Position = UDim2.new(0.0346820801, 0, 0, 0)
+    Setting.Size = UDim2.new(0.78612715, 0, 1, 0)
+    Setting.Font = Enum.Font.SourceSans
+    Setting.Text = "Rainbow logs"
+    Setting.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Setting.TextSize = 13.000
+    Setting.TextWrapped = true
+    Setting.TextXAlignment = Enum.TextXAlignment.Left
+
+    TixBox.Name = "TixBox"
+    TixBox.AnchorPoint = Vector2.new(0.5, 0.5)
+    TixBox.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
+    TixBox.BackgroundTransparency = 0.500
+    TixBox.BorderSizePixel = 0
+    TixBox.LayoutOrder = 2
+    TixBox.Position = UDim2.new(0.949999988, 0, 0.469999999, 0)
+    TixBox.Size = UDim2.new(0.0982658938, 0, 0.926935673, 0)
+    TixBox.ZIndex = 2
+    TixBox.ImageRectOffset = Vector2.new(644, 204)
+    TixBox.ImageRectSize = Vector2.new(36, 36)
+
+    NormalTitle.Name = "NormalTitle"
+    NormalTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    NormalTitle.BackgroundTransparency = 1.000
+    NormalTitle.Position = UDim2.new(0.559902191, 0, 0.0941121206, 0)
+    NormalTitle.Size = UDim2.new(0.420537889, 0, 0.0560747646, 0)
+    NormalTitle.Font = Enum.Font.SourceSans
+    NormalTitle.Text = "Normal Settings"
+    NormalTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NormalTitle.TextScaled = true
+    NormalTitle.TextSize = 14.000
+    NormalTitle.TextWrapped = true
+    NormalTitle.TextXAlignment = Enum.TextXAlignment.Left
+    NormalTitle.TextYAlignment = Enum.TextYAlignment.Top
+
+    TixBox.MouseButton1Click:Connect(function()
+        if TixBox.Image == "rbxassetid://3926305904" then
+            TixBox.Image = ""
+            RainbowText = false
+        else
+            TixBox.Image = "rbxassetid://3926305904"
+            RainbowText = true
+        end
+    end)
+
+
+    for i, v in pairs(game.Players:GetPlayers()) do
+        local Player = v.Name
+        local PlayerBlock = PlayerBlock:Clone()
+        PlayerBlock.Visible = true
+        PlayerBlock.Parent = BlackList
+        PlayerBlock.Player.Text = Player
+        PlayerBlock.TickBox.MouseButton1Click:Connect(function()
+            if PlayerBlock.TickBox.Image == "rbxassetid://3926305904" then
+                PlayerBlock.TickBox.Image = ""
+                for i, v in pairs(BlacklistedPlayers) do
+                    if v == Player then
+                        table.remove(BlacklistedPlayers, i)
+                    end
+                end
+            else
+                PlayerBlock.TickBox.Image = "rbxassetid://3926305904"
+                table.insert(BlacklistedPlayers, Player)
+            end
+        end)
+    end
+
+ 
+    game.Players.PlayerAdded:Connect(function(Player)
+        local PlayerBlock = PlayerBlock:Clone()
+        PlayerBlock.Visible = true
+        PlayerBlock.Parent = BlackList
+        PlayerBlock.Player.Text = Player.Name
+        PlayerBlock.TickBox.MouseButton1Click:Connect(function()
+            if PlayerBlock.TickBox.Image == "rbxassetid://3926305904" then
+                PlayerBlock.TickBox.Image = ""
+                for i, v in pairs(BlacklistedPlayers) do
+                    if v == Player.Name then
+                        table.remove(BlacklistedPlayers, i)
+                    end
+                end
+            else
+                PlayerBlock.TickBox.Image = "rbxassetid://3926305904"
+                table.insert(BlacklistedPlayers, Player.Name)
+            end
+        end)
+    end)
+
+    game.Players.PlayerRemoving:Connect(function(Player)
+        for i, v in pairs(BlackList:GetChildren()) do
+            if v.Player.Text == Player.Name then
+                v:Destroy()
+            end
+        end
+    end)
+
+
+
+    
+
     local function getTime()
         local time = os.time()
         local hour= math.floor(time / 3600) % 24
@@ -207,12 +447,18 @@ function load()
     end
 
     local function AddLog(msg)
+        local Player = msg:match("%[(.+)%]")
+        for i, v in pairs(BlacklistedPlayers) do
+            if v == Player then
+                return
+            end
+        end
+
         LogNum = LogNum + 1
         local TextLabel = Instance.new("TextButton",ScrollingFrame)
         local TimeDone = Instance.new("TextLabel",TextLabel)
         TextLabel.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         TextLabel.BackgroundTransparency = 0.500
-        TextLabel.BorderColor3 = Color3.fromRGB(27, 42, 53)
         TextLabel.BorderSizePixel = 0
         TextLabel.Position = UDim2.new(0.100000001, 0, 2.17164579e-05, 0)
         TextLabel.Size = UDim2.new(0.949999988, 0, 0, 23)
@@ -225,11 +471,17 @@ function load()
         TextLabel.Name = tostring(StartNum)
         StartNum = StartNum - 1
 
+        if RainbowText then
+            TextLabel.TextColor3 = Color3.fromHSV(math.random(), 1, 1)
+        end
+
         if msg:match("deleted") then
             TextLabel.TextColor3 = Color3.fromRGB(255, 122, 0)
         elseif msg:match("removing a wire") then
             TextLabel.TextColor3 = Color3.fromRGB(255, 122, 0)
         end
+
+        
 
         if Paused or Searching then
             TextLabel.Visible = false
@@ -273,7 +525,7 @@ function load()
         local LastMessage = Message
         AddLog(Message)
         
-        if not Searching then
+        if not Searching or not Paused then
             Title.Text = "Logs: "..LogNum
         end
     end)
@@ -310,6 +562,15 @@ function load()
         end
     end)
 
+    Close.MouseButton1Click:Connect(function()
+        SettingsFrame.Visible = false
+    end)
+
+    Settings.MouseButton1Click:Connect(function()
+        SettingsFrame.Visible = not SettingsFrame.Visible
+    end)
+
+
     OpenClose.MouseButton1Click:Connect(function()
         if Open then
             Open = false
@@ -320,14 +581,14 @@ function load()
         end
     end)
 
-    Player.PlayerGui.Leaderboard.ChildAdded:Connect(function(child)
+    LocalPlayer.PlayerGui.Leaderboard.ChildAdded:Connect(function(child)
         if child.Name == "Frame" then
             child:TweenPosition(UDim2.new(1, -620, 0, 41), nil,Enum.EasingStyle.Sine,0.25,true)
         end
     end)
 
-    Player.PlayerGui.Leaderboard.MainFrame:GetPropertyChangedSignal("AbsolutePosition"):connect(function()
-        local absolutepos = Player.PlayerGui.Leaderboard.MainFrame.AbsolutePosition
+    LocalPlayer.PlayerGui.Leaderboard.MainFrame:GetPropertyChangedSignal("AbsolutePosition"):connect(function()
+        local absolutepos = LocalPlayer.PlayerGui.Leaderboard.MainFrame.AbsolutePosition
         if tween and Open then 
             Frame:TweenPosition(UDim2.new(1, -310, 0, 5), nil,Enum.EasingStyle.Sine,0.2,true)
         end
