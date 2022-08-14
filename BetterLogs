@@ -1,3 +1,5 @@
+if game.CoreGui:FindFirstChild("ScreenGui") then game.CoreGui:FindFirstChild("ScreenGui"):Destroy() end
+
 function load()
     local LogService = game:GetService("LogService")
     local Players = game:GetService("Players")
@@ -678,9 +680,21 @@ function load()
     workspace.ChildRemoved:Connect(function(Child)
         wait(.025)
         if Child:IsA("BasePart") and bool == false then
-           AddLog("[F3X/Server]".." deleted a "..Child.Name)
-           
+            for i,v in pairs(workspace:GetChildren()) do
+                print("Working")
+                for i2,v2 in pairs(Players:GetChildren()) do
+                    print("Working2")
+                    if v.Name == v2.Name then
+                        print("Okay")
+                        if v:FindFirstChild("F3X") then
+                            AddLog(tostring(v2).." Using [F3X]".." deleted a "..Child.Name)
+                            return
+                        end
+                    end
+                end
+            end  
         end
+        AddLog("[Server]".." deleted a "..Child.Name)
     end)
 
 
