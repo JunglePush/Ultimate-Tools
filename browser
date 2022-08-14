@@ -1,7 +1,8 @@
 -- walking like an oompa loompa
 game:GetService("BrowserService"):OpenWeChatAuth()
 
---[[ note: if you dont know what to do with the browser then figure it out urself (404 not found, -- you get this when you execute the browser code)
+--[[
+note: if you dont know what to do with the browser then figure it out urself (404 not found, -- you get this when you execute the browser code)
 made by gorilla762 (not junglepush)
 
 random script used to open wechat ching chong social media auth (roblox removed it ig but not the function)
