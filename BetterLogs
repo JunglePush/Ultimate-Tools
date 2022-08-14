@@ -693,8 +693,9 @@ function load()
                     end
                 end
             end  
+            AddLog("[Server]".." deleted a "..Child.Name)
         end
-        AddLog("[Server]".." deleted a "..Child.Name)
+        
     end)
 
 
